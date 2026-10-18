@@ -1,0 +1,3 @@
+metrica,A,B,n_A,n_B,dif_pp,se_pp,z,p_valor
+conversion_top8k,0.094,0.088,8000,8000,0.6,0.45,1.32,0.187
+mora_renovados,0.072,0.046,752,704,2.6,1.23,2.11,0.034

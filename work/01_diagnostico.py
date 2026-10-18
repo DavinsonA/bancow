@@ -1,8 +1,10 @@
 """Diagnóstico de Base_Clientes sobre COPIA del anexo (el original no se modifica)."""
-import pandas as pd, numpy as np, json, warnings
+import sys, pandas as pd, numpy as np, json, warnings
+sys.stdout.reconfigure(encoding="utf-8")
 from sklearn.metrics import roc_auc_score
 warnings.filterwarnings("ignore")
 pd.set_option("display.width", 220); pd.set_option("display.max_columns", 50)
+SCORE_RANGE = (150, 950)  # escala DataCrédito; pendiente confirmar central, versión y vigencia
 X = pd.ExcelFile("work/copia_Anexo_BancoW.xlsx")
 df = X.parse("Base_Clientes")
 out = {}
@@ -22,7 +24,8 @@ chk = {
  "max_mora_6m<0": (df.max_mora_6m<0).sum(),
  "saldo_ahorros<0": (df.saldo_ahorros<0).sum(),
  "endeudamiento_proxy>1": (df.endeudamiento_proxy>1).sum(),
- "score_buro fuera 400-850": ((df.score_buro<400)|(df.score_buro>850)).sum(),
+ "score_buro fuera DataCrédito 150-950": ((df.score_buro<SCORE_RANGE[0])|(df.score_buro>SCORE_RANGE[1])).sum(),
+ "score_buro rango obs": (int(df.score_buro.min()), int(df.score_buro.max())),
  "cuotas_pagadas_pct fuera 0-1": ((df.cuotas_pagadas_pct<0)|(df.cuotas_pagadas_pct>1)).sum(),
  "tasa_actual_ea rango": (df.tasa_actual_ea.min(), df.tasa_actual_ea.max()),
  "rentabilidad_12m<0": (df.rentabilidad_12m<0).sum(),
@@ -64,6 +67,8 @@ print("\n--- renovación por recibe_remesas:"); print(df.groupby("recibe_remesas
 print("--- renovación por cuartil contactabilidad:"); print(df.groupby(pd.qcut(df.contactabilidad_score,4)).renovo_30d.agg(["mean","count"]).round(3))
 print("--- no contactado por cuartil contactabilidad:"); print(df.groupby(pd.qcut(df.contactabilidad_score,4)).apply(lambda g:(g.resultado_gestion_30d=="No contactado").mean()).round(3))
 print("--- score_buro medio por renovo:", df.groupby("renovo_30d").score_buro.mean().round(1).to_dict())
+cb = df.groupby(pd.qcut(df.score_buro,3,labels=["bajo","medio","alto"])).apply(lambda g: pd.Series({"n":len(g),"score_min":g.score_buro.min(),"score_max":g.score_buro.max(),"tasa_no_contactado":(g.resultado_gestion_30d=="No contactado").mean(),"tasa_renovacion":g.renovo_30d.mean()})).round(3)
+print("--- contacto y renovación por tercil de score_buro:"); print(cb.to_string()); cb.to_csv("work/output/contacto_por_buro.csv")
 print("--- mora30 por score_buro tercil (renovados):"); r=df[df.renovo_30d==1]; print(r.groupby(pd.qcut(r.score_buro,3)).mora30_post_renovacion.agg(["mean","sum","count"]).round(3))
 # economía muestra: ¿qué implica 'Top 8k'?
 print("\n--- 8000/25000 =", 8000/25000, "| top 32% de la muestra =", int(0.32*len(df)))

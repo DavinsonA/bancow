@@ -1,5 +1,6 @@
 """Valor esperado por alternativa, sensibilidad, asignación por capacidad regional y tamaño del piloto."""
-import pandas as pd, numpy as np
+import sys, pandas as pd, numpy as np
+sys.stdout.reconfigure(encoding="utf-8")
 from scipy.stats import norm
 K=8000; C=420_000; L=1_800_000
 alts = pd.DataFrame([
@@ -54,7 +55,8 @@ print("\n=== Lista operativa: ranking global vs cuotas (muestra test 06-08) ==="
 # exceso/defecto de demanda por regional con ranking global
 dem = glob.regional.value_counts(normalize=True).rename("share_lista_global"); 
 cap2 = cap.merge(dem, left_on="regional", right_index=True)
-cap2["contactos_si_global"] = (cap2.share_lista_global*8000).round(0); cap2["exceso_vs_cap"]=cap2.contactos_si_global-cap2.cap
+cap2["contactos_si_global"] = (cap2.share_lista_global*8000/100).round(0)*100; cap2["exceso_vs_cap"]=cap2.contactos_si_global-cap2.cap
+print(f"Aproximación (redondeada a centenas): asume que la mezcla regional de la muestra de test (n = {n}) es la del universo")
 print(cap2[["regional","cap","contactos_si_global","exceso_vs_cap"]].to_string(index=False))
 # valor marginal (VE del último seleccionado) por regional bajo cuotas -> indica dónde transferir capacidad
 marg = quota.groupby("regional").VE.min().div(1e3).round(1).rename("VE_marginal_k")
@@ -67,3 +69,24 @@ def n_two_prop(p1,p2,alpha=0.05,power=0.8):
 print("\n=== Tamaño por brazo (alpha 5%, potencia 80%) ===")
 for p1,p2,lab in [(0.036,0.045,"3,6% -> 4,5% (+25% rel)"),(0.036,0.054,"3,6% -> 5,4% (+50% rel)"),(0.036,0.072,"3,6% -> 7,2% (x2)"),(0.036,0.088,"3,6% -> 8,8% (B reportado)"),(0.051,0.072,"mora 5,1% -> 7,2% (entre renovados)"),(0.023,0.05,"holdout: organico 2,3% -> 5% contactados")]:
     print(f"  {lab}: n/brazo = {n_two_prop(p1,p2):,.0f}")
+
+# ---------- Incertidumbre de las cifras reportadas en la hoja (A vs B) ----------
+def z_two_prop(p1,n1,p2,n2):
+    se=np.sqrt(p1*(1-p1)/n1+p2*(1-p2)/n2); return se,(p1-p2)/se
+inc=[]
+se,z=z_two_prop(0.094,8000,0.088,8000); inc.append(dict(metrica="conversion_top8k",A=0.094,B=0.088,n_A=8000,n_B=8000,dif_pp=0.6,se_pp=round(se*100,2),z=round(z,2),p_valor=round(2*(1-norm.cdf(abs(z))),3)))
+se,z=z_two_prop(0.072,752,0.046,704); inc.append(dict(metrica="mora_renovados",A=0.072,B=0.046,n_A=752,n_B=704,dif_pp=2.6,se_pp=round(se*100,2),z=round(z,2),p_valor=round(2*(1-norm.cdf(abs(z))),3)))
+inc=pd.DataFrame(inc); print("\n=== Incertidumbre A-B (supuesto: 8.000 contactos por alternativa; renovados 752 y 704) ==="); print(inc.to_string(index=False)); inc.to_csv("work/output/incertidumbre_AB.csv", index=False)
+# ---------- Holdout: potencia con uplifts realistas y costo de oportunidad ----------
+H=800; MORA_B=0.046; ve_renov=C-MORA_B*L
+def n_unequal(p1,p2,r,alpha=0.05,power=0.8):
+    # n1 = tamaño del brazo chico (holdout) cuando el otro brazo tiene r*n1
+    z1=norm.ppf(1-alpha/2); z2=norm.ppf(power); pb=(p1+r*p2)/(1+r)
+    return (z1*np.sqrt(pb*(1-pb)*(1+1/r))+z2*np.sqrt(p1*(1-p1)+p2*(1-p2)/r))**2/(p2-p1)**2
+ph=[]
+for p2 in [0.035,0.040,0.045,0.050]:
+    n_eq=n_two_prop(0.023,p2); n_h=n_unequal(0.023,p2,5)
+    ph.append(dict(organico=0.023,contactado=p2,uplift_pp=round((p2-0.023)*100,1),n_por_brazo_igual=int(np.ceil(n_eq)),meses_igual=round(n_eq/H,1),
+                   n_holdout_5a1=int(np.ceil(n_h)),meses_5a1=round(n_h/H,1),costo_oportunidad_M_mes=round(H*(p2-0.023)*ve_renov/1e6,2)))
+ph=pd.DataFrame(ph); print(f"\n=== Holdout de {H}/mes: potencia (alpha 5 %, 80 %) y costo de oportunidad (COP M/mes, mora {MORA_B:.1%}, VE/renov {ve_renov/1e3:.0f}k). 5a1 = contactados 4.000 vs holdout 800 ===")
+print(ph.to_string(index=False)); ph.to_csv("work/output/potencia_holdout.csv", index=False)

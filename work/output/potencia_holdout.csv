@@ -1,0 +1,5 @@
+organico,contactado,uplift_pp,n_por_brazo_igual,meses_igual,n_holdout_5a1,meses_5a1,costo_oportunidad_M_mes
+0.023,0.035,1.2,3069,3.8,1932,2.4,3.24
+0.023,0.04,1.7,1656,2.1,1056,1.3,4.59
+0.023,0.045,2.2,1065,1.3,685,0.9,5.93
+0.023,0.05,2.7,757,0.9,491,0.6,7.28

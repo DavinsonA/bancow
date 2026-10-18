@@ -6,7 +6,7 @@
 C LightGBM (fuga)        0.15        0.06        1184.0        0.06           497.28          136.40     360.88      304800.0             266.36
          D Uplift        0.08         NaN         632.0        0.05           265.44           58.02     207.42      328200.0             112.90
 
-D: valor INCREMENTAL atribuible al contacto si +3,1 pp es uplift de conversión: 248 renov x 328k = 81.4 M COP/mes
+D: valor INCREMENTAL atribuible al contacto si +3,1 pp es uplift de conversiÃ³n: 248 renov x 328k = 81.4 M COP/mes
 A supera a B solo si su mora entre renovados < 5.796% (reportada 7,2 %)
 
 Sensibilidad VE (M COP) a L:
@@ -17,7 +17,7 @@ L_M
 2.5  180.5  214.7
 3.5  126.3  182.3
 
-Escenario de no incrementalidad (B): valor neto si una fracción de las 704 renovaciones era orgánica
+Escenario de no incrementalidad (B): valor neto si una fracciÃ³n de las 704 renovaciones era orgÃ¡nica
   organicas=0%: VE_incremental = 237.4 M
   organicas=25%: VE_incremental = 178.0 M
   organicas=50%: VE_incremental = 118.7 M
@@ -33,27 +33,40 @@ Eje Cafetero 1000      0.038      0.049      0.125          0.144        3592.0 
 
 === Lista operativa: ranking global vs cuotas (muestra test 06-08) ===
                       esquema   n  renov_obs  conv  VE_medio_k  n_Suroccidente  n_Centro  n_Norte  n_Eje Cafetero  n_Oriente
-       Ranking global top 32% 223         97 0.435       149.6              65        59       40              32         27
-Cuotas por capacidad regional 222         93 0.419       149.1              72        53       33              28         36
+       Ranking global top 32% 223         95 0.426       143.6              67        58       35              32         31
+Cuotas por capacidad regional 222         96 0.432       143.4              72        53       33              28         36
+AproximaciÃ³n (redondeada a centenas): asume que la mezcla regional de la muestra de test (n = 696) es la del universo
     regional  cap  contactos_si_global  exceso_vs_cap
-Suroccidente 2600               2332.0         -268.0
-      Centro 1900               2117.0          217.0
-       Norte 1200               1435.0          235.0
-Eje Cafetero 1000               1148.0          148.0
-     Oriente 1300                969.0         -331.0
+Suroccidente 2600               2400.0         -200.0
+      Centro 1900               2100.0          200.0
+       Norte 1200               1300.0          100.0
+Eje Cafetero 1000               1100.0          100.0
+     Oriente 1300               1100.0         -200.0
 
-VE marginal (k COP) del último cliente que entra por regional bajo cuotas:
+VE marginal (k COP) del Ãºltimo cliente que entra por regional bajo cuotas:
 regional
-Centro          84.6
-Eje Cafetero    89.6
-Norte           92.8
-Oriente         60.1
-Suroccidente    65.9
+Centro          80.0
+Eje Cafetero    81.0
+Norte           86.2
+Oriente         61.1
+Suroccidente    61.4
 
-=== Tamaño por brazo (alpha 5%, potencia 80%) ===
+=== TamaÃ±o por brazo (alpha 5%, potencia 80%) ===
   3,6% -> 4,5% (+25% rel): n/brazo = 7,530
   3,6% -> 5,4% (+50% rel): n/brazo = 2,081
   3,6% -> 7,2% (x2): n/brazo = 618
   3,6% -> 8,8% (B reportado): n/brazo = 336
   mora 5,1% -> 7,2% (entre renovados): n/brazo = 2,053
   holdout: organico 2,3% -> 5% contactados: n/brazo = 756
+
+=== Incertidumbre A-B (supuesto: 8.000 contactos por alternativa; renovados 752 y 704) ===
+         metrica     A     B  n_A  n_B  dif_pp  se_pp    z  p_valor
+conversion_top8k 0.094 0.088 8000 8000     0.6   0.45 1.32    0.187
+  mora_renovados 0.072 0.046  752  704     2.6   1.23 2.11    0.034
+
+=== Holdout de 800/mes: potencia (alpha 5 %, 80 %) y costo de oportunidad (COP M/mes, mora 4.6%, VE/renov 337k). 5a1 = contactados 4.000 vs holdout 800 ===
+ organico  contactado  uplift_pp  n_por_brazo_igual  meses_igual  n_holdout_5a1  meses_5a1  costo_oportunidad_M_mes
+    0.023       0.035        1.2               3069          3.8           1932        2.4                     3.24
+    0.023       0.040        1.7               1656          2.1           1056        1.3                     4.59
+    0.023       0.045        2.2               1065          1.3            685        0.9                     5.93
+    0.023       0.050        2.7                757          0.9            491        0.6                     7.28
