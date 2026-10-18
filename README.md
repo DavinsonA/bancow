@@ -1,6 +1,6 @@
 # Prueba técnica Banco W · Priorización de renovaciones
 
-Solución al reto descrito en `docs/Prueba_Tecnica_Cientifico_Datos_BancoW.pdf`.
+Solución al reto de la prueba técnica de Científico de Datos de Banco W (priorización de clientes para renovación con capacidad limitada). El enunciado (PDF) y el anexo de datos (Excel) pertenecen a un proceso de selección y **no se versionan en este repositorio**; ver «Datos de entrada».
 
 ## Entregables
 
@@ -16,15 +16,28 @@ Solución al reto descrito en `docs/Prueba_Tecnica_Cientifico_Datos_BancoW.pdf`.
 | `work/deck/qa_deck.py` | QA de densidad del deck con python-pptx: ≤ 140 palabras fuera de tablas, cuerpo ≥ 11 pt, tablas ≥ 10 pt y ≤ 5 filas (monitoreo ≤ 6), notas en todas las slides. |
 | `requirements.txt` | Versiones fijadas de Python. |
 
+## Datos de entrada (no versionados)
+
+Para reproducir los cálculos hay que colocar localmente, con estos nombres exactos:
+
+| Ruta | Archivo | Origen |
+|---|---|---|
+| `data/Anexo_Prueba_Cientifico_Datos_BancoW.xlsx` | Anexo de la prueba (hojas `LEEME`, `Base_Clientes`, `Diccionario`, `Resultados_Modelos`, `Capacidad_Regional`) | Entregado por Banco W con la prueba. SHA-256 esperado: `c5b55ba57f6b2bcc2ecb74cf95dd75469d13e891e29284fbc5e4283d15a1f8fa` |
+| `work/copia_Anexo_BancoW.xlsx` | Copia idéntica del anexo sobre la que corren los scripts (`cp data/Anexo_Prueba_Cientifico_Datos_BancoW.xlsx work/copia_Anexo_BancoW.xlsx`) | Se crea localmente |
+| `docs/Prueba_Tecnica_Cientifico_Datos_BancoW.pdf` | Enunciado con las 19 preguntas (opcional para reproducir) | Entregado por Banco W |
+
+Las tres rutas están en `.gitignore`. Las salidas en `work/output/` sí se versionan, así que el deck y la guía se pueden regenerar sin el anexo.
+
 ## Reglas respetadas
 
-- El Excel original en `data/` no se modificó. Todo cálculo corre sobre `work/copia_Anexo_BancoW.xlsx`. SHA-256 del original verificado antes y después: `c5b55ba57f6b2bcc2ecb74cf95dd75469d13e891e29284fbc5e4283d15a1f8fa`.
+- El Excel original no se modificó. Todo cálculo corre sobre la copia. SHA-256 del original verificado antes y después de cada ronda: `c5b55ba57f6b2bcc2ecb74cf95dd75469d13e891e29284fbc5e4283d15a1f8fa`.
 - La presentación tiene exactamente 6 slides de contenido + 1 anexo.
 
 ## Reproducir
 
 ```bash
 pip install -r requirements.txt
+cp data/Anexo_Prueba_Cientifico_Datos_BancoW.xlsx work/copia_Anexo_BancoW.xlsx
 python work/01_diagnostico.py > work/output/01_diagnostico.txt
 python work/02_modelos_fuga.py > work/output/02_modelos_fuga.txt
 python work/03_economia_capacidad_piloto.py > work/output/03_economia.txt

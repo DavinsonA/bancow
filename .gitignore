@@ -12,3 +12,8 @@ __pycache__/
 Thumbs.db
 # Investigación de apoyo (no versionada)
 docs_privados/
+# Material del proceso de selección (no versionado; ver README, Datos de entrada)
+data/
+docs/*.pdf
+work/copia_Anexo_BancoW.xlsx
+CHANGELOG_revision.md
