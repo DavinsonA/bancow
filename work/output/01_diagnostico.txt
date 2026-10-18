@@ -85,7 +85,7 @@ mora30_post_renovacion         0.000  1.000000e+00        0.002
 --- checks de validez: {'max_mora_6m<0': np.int64(1), 'saldo_ahorros<0': np.int64(1), 'endeudamiento_proxy>1': np.int64(25), 'score_buro fuera DataCrédito 150-950': np.int64(0), 'score_buro rango obs': (352, 912), 'cuotas_pagadas_pct fuera 0-1': np.int64(0), 'tasa_actual_ea rango': (np.float64(0.2225), np.float64(0.5961)), 'rentabilidad_12m<0': np.int64(164), 'monto_preaprobado<=0': np.int64(0), 'antiguedad_meses<=1': np.int64(105)}
 
 --- fecha_ultimo_contacto > inicio corte: 1 | max fecha: 2026-09-15
-    fecha_ultimo_contacto dentro del mes de corte (>= inicio): 51
+    fecha_ultimo_contacto dentro del mes de corte (>= inicio): 51 | después del corte: 1 -> dias_ultimo_contacto fuera del set limpio hasta certificar timestamp (AUC univariado 0,50)
     corr(dias_ultimo_contacto, inicio_corte - fecha): 0.9933
 
 --- resultado_gestion_30d x renovo_30d:
@@ -180,6 +180,14 @@ score_buro
 bajo        604.0      352.0      582.0               0.371            0.030
 medio       609.0      583.0      651.0               0.332            0.159
 alto        587.0      652.0      912.0               0.221            0.424
+--- renovación orgánica (no contactados) vs. contactados por tercil de buró (base deduplicada, IC Wilson 95 %):
+tercil    contactado   n  eventos   tasa  ic_inf  ic_sup
+  bajo    contactado 380       17 0.0447  0.0281  0.0705
+  bajo no_contactado 224        1 0.0045  0.0008  0.0249
+ medio    contactado 407       92 0.2260  0.1881  0.2691
+ medio no_contactado 202        5 0.0248  0.0106  0.0566
+  alto    contactado 457      242 0.5295  0.4837  0.5749
+  alto no_contactado 129        7 0.0543  0.0265  0.1078
 --- mora30 por score_buro tercil (renovados):
                    mean  sum  count
 score_buro                         

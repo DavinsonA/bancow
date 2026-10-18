@@ -67,7 +67,7 @@ def n_two_prop(p1,p2,alpha=0.05,power=0.8):
     z1=norm.ppf(1-alpha/2); z2=norm.ppf(power); pb=(p1+p2)/2
     return (z1*np.sqrt(2*pb*(1-pb))+z2*np.sqrt(p1*(1-p1)+p2*(1-p2)))**2/(p2-p1)**2
 print("\n=== Tamaño por brazo (alpha 5%, potencia 80%) ===")
-for p1,p2,lab in [(0.036,0.045,"3,6% -> 4,5% (+25% rel)"),(0.036,0.054,"3,6% -> 5,4% (+50% rel)"),(0.036,0.072,"3,6% -> 7,2% (x2)"),(0.036,0.088,"3,6% -> 8,8% (B reportado)"),(0.051,0.072,"mora 5,1% -> 7,2% (entre renovados)"),(0.023,0.05,"holdout: organico 2,3% -> 5% contactados")]:
+for p1,p2,lab in [(0.036,0.045,"3,6% -> 4,5% (+25% rel)"),(0.036,0.054,"3,6% -> 5,4% (+50% rel)"),(0.036,0.072,"3,6% -> 7,2% (x2)"),(0.036,0.088,"3,6% -> 8,8% (B reportado)"),(0.051,0.072,"mora 5,1% -> 7,2% (entre renovados)")]:
     print(f"  {lab}: n/brazo = {n_two_prop(p1,p2):,.0f}")
 
 # ---------- Incertidumbre de las cifras reportadas en la hoja (A vs B) ----------
@@ -83,10 +83,16 @@ def n_unequal(p1,p2,r,alpha=0.05,power=0.8):
     # n1 = tamaño del brazo chico (holdout) cuando el otro brazo tiene r*n1
     z1=norm.ppf(1-alpha/2); z2=norm.ppf(power); pb=(p1+r*p2)/(1+r)
     return (z1*np.sqrt(pb*(1-pb)*(1+1/r))+z2*np.sqrt(p1*(1-p1)+p2*(1-p2)/r))**2/(p2-p1)**2
+# Baseline del holdout: el holdout sale del top de B (tercil alto de buró), donde el orgánico es ~5 % (ver organico_por_buro.csv), no el 2,3 % global
 ph=[]
-for p2 in [0.035,0.040,0.045,0.050]:
-    n_eq=n_two_prop(0.023,p2); n_h=n_unequal(0.023,p2,5)
-    ph.append(dict(organico=0.023,contactado=p2,uplift_pp=round((p2-0.023)*100,1),n_por_brazo_igual=int(np.ceil(n_eq)),meses_igual=round(n_eq/H,1),
-                   n_holdout_5a1=int(np.ceil(n_h)),meses_5a1=round(n_h/H,1),costo_oportunidad_M_mes=round(H*(p2-0.023)*ve_renov/1e6,2)))
-ph=pd.DataFrame(ph); print(f"\n=== Holdout de {H}/mes: potencia (alpha 5 %, 80 %) y costo de oportunidad (COP M/mes, mora {MORA_B:.1%}, VE/renov {ve_renov/1e3:.0f}k). 5a1 = contactados 4.000 vs holdout 800 ===")
+for b in [0.04,0.05,0.06]:
+    for u in [0.017,0.025,0.038]:
+        n_h=n_unequal(b,b+u,5); esc = "conservador" if (b,u)==(0.05,0.017) else ("plausible" if (b,u)==(0.05,0.038) else "")
+        ph.append(dict(baseline=b,uplift_pp=round(u*100,1),contactado=round(b+u,3),n_holdout=int(np.ceil(n_h)),meses_a_800=round(n_h/H,1),costo_oportunidad_M_mes=round(H*u*ve_renov/1e6,2),escenario=esc))
+ph=pd.DataFrame(ph); print(f"\n=== Holdout {H}/mes vs. 4.000 contactados: malla baseline x uplift (alpha 5 %, potencia 80 %; costo = 800 x uplift x VE/renov B {ve_renov/1e3:.0f}k) ===")
 print(ph.to_string(index=False)); ph.to_csv("work/output/potencia_holdout.csv", index=False)
+# Fracción orgánica implícita de B: si B convierte 8,8 % entre contactados y su orgánico es ~5 %, el uplift implícito es 3,8 pp y ~57 % de sus renovaciones serían orgánicas
+oi=[]
+for b in [0.04,0.05,0.06]:
+    frac=b/0.088; oi.append(dict(organico_supuesto=b,conv_B=0.088,uplift_implicito_pp=round((0.088-b)*100,1),fraccion_organica=round(frac,3),renov_incrementales=round(704*(1-frac)),VE_incremental_B_M=round(704*(1-frac)*ve_renov/1e6,1)))
+oi=pd.DataFrame(oi); print("\n=== Fracción orgánica implícita de B y VE incremental (704 renovaciones, VE/renov 337k) ==="); print(oi.to_string(index=False)); oi.to_csv("work/output/organico_implicito.csv", index=False)

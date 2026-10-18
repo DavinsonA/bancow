@@ -1,0 +1,7 @@
+tercil,contactado,n,eventos,tasa,ic_inf,ic_sup
+bajo,contactado,380,17,0.0447,0.0281,0.0705
+bajo,no_contactado,224,1,0.0045,0.0008,0.0249
+medio,contactado,407,92,0.226,0.1881,0.2691
+medio,no_contactado,202,5,0.0248,0.0106,0.0566
+alto,contactado,457,242,0.5295,0.4837,0.5749
+alto,no_contactado,129,7,0.0543,0.0265,0.1078

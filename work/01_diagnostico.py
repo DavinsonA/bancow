@@ -38,7 +38,7 @@ df["inicio_corte"] = pd.to_datetime(df.mes_corte+"-01")
 df["fecha_ultimo_contacto"] = pd.to_datetime(df.fecha_ultimo_contacto)
 df["dif_dias"] = (df.inicio_corte - df.fecha_ultimo_contacto).dt.days
 print("\n--- fecha_ultimo_contacto > inicio corte:", (df.fecha_ultimo_contacto>df.inicio_corte).sum(), "| max fecha:", df.fecha_ultimo_contacto.max().date())
-print("    fecha_ultimo_contacto dentro del mes de corte (>= inicio):", (df.fecha_ultimo_contacto>=df.inicio_corte).sum())
+print("    fecha_ultimo_contacto dentro del mes de corte (>= inicio):", (df.fecha_ultimo_contacto>=df.inicio_corte).sum(), "| después del corte:", (df.fecha_ultimo_contacto>df.inicio_corte).sum(), "-> dias_ultimo_contacto fuera del set limpio hasta certificar timestamp (AUC univariado 0,50)")
 print("    corr(dias_ultimo_contacto, inicio_corte - fecha):", np.corrcoef(df.dias_ultimo_contacto, df.dif_dias)[0,1].round(4))
 # leakage crosstabs
 print("\n--- resultado_gestion_30d x renovo_30d:")
@@ -69,6 +69,13 @@ print("--- no contactado por cuartil contactabilidad:"); print(df.groupby(pd.qcu
 print("--- score_buro medio por renovo:", df.groupby("renovo_30d").score_buro.mean().round(1).to_dict())
 cb = df.groupby(pd.qcut(df.score_buro,3,labels=["bajo","medio","alto"])).apply(lambda g: pd.Series({"n":len(g),"score_min":g.score_buro.min(),"score_max":g.score_buro.max(),"tasa_no_contactado":(g.resultado_gestion_30d=="No contactado").mean(),"tasa_renovacion":g.renovo_30d.mean()})).round(3)
 print("--- contacto y renovación por tercil de score_buro:"); print(cb.to_string()); cb.to_csv("work/output/contacto_por_buro.csv")
+from scipy.stats import norm as _norm
+def wilson(k, n, z=1.96):
+    p=k/n; d=1+z*z/n; c=(p+z*z/(2*n))/d; h=z*np.sqrt(p*(1-p)/n+z*z/(4*n*n))/d; return c-h, c+h
+dd = df.drop_duplicates().copy(); dd["tercil"]=pd.qcut(dd.score_buro,3,labels=["bajo","medio","alto"]); dd["contactado"]=np.where(dd.resultado_gestion_30d=="No contactado","no_contactado","contactado")
+og = dd.groupby(["tercil","contactado"]).renovo_30d.agg(n="count", eventos="sum", tasa="mean").reset_index()
+og[["ic_inf","ic_sup"]] = og.apply(lambda r: pd.Series(wilson(r.eventos, r.n)), axis=1); og=og.round(4)
+print("--- renovación orgánica (no contactados) vs. contactados por tercil de buró (base deduplicada, IC Wilson 95 %):"); print(og.to_string(index=False)); og.to_csv("work/output/organico_por_buro.csv", index=False)
 print("--- mora30 por score_buro tercil (renovados):"); r=df[df.renovo_30d==1]; print(r.groupby(pd.qcut(r.score_buro,3)).mora30_post_renovacion.agg(["mean","sum","count"]).round(3))
 # economía muestra: ¿qué implica 'Top 8k'?
 print("\n--- 8000/25000 =", 8000/25000, "| top 32% de la muestra =", int(0.32*len(df)))

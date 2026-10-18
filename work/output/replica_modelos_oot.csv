@@ -1,17 +1,17 @@
 gap,conjunto,modelo,auc_oot,auc_min,auc_max,pr_auc,conv_top32,pend_calib,brier
-1,Limpio ex ante (16 vars),LogReg,0.817,0.779,0.846,0.521,0.452,0.898,0.13
-1,Limpio ex ante (16 vars),LightGBM,0.786,0.761,0.81,0.488,0.421,0.767,0.138
-1,Ex ante + remesas + contactabilidad + regional,LogReg,0.819,0.782,0.848,0.531,0.458,0.898,0.129
-1,Ex ante + remesas + contactabilidad + regional,LightGBM,0.79,0.759,0.813,0.492,0.41,0.771,0.137
-1,+ resultado_gestion_30d (fuga),LogReg,0.944,0.932,0.962,0.845,0.594,0.992,0.067
-1,+ resultado_gestion_30d (fuga),LightGBM,0.928,0.902,0.942,0.802,0.577,0.935,0.076
-1,+ todas (incl. dias_hasta_renovacion),LogReg,0.997,0.994,1.0,0.99,0.647,1.028,0.015
-1,+ todas (incl. dias_hasta_renovacion),LightGBM,1.0,1.0,1.0,1.0,0.647,1.001,0.0
-0,Limpio ex ante (16 vars),LogReg,0.821,0.788,0.853,0.516,0.441,0.888,0.128
-0,Limpio ex ante (16 vars),LightGBM,0.796,0.759,0.822,0.482,0.434,0.768,0.135
-0,Ex ante + remesas + contactabilidad + regional,LogReg,0.822,0.789,0.851,0.517,0.447,0.888,0.128
-0,Ex ante + remesas + contactabilidad + regional,LightGBM,0.797,0.762,0.824,0.491,0.442,0.794,0.133
-0,+ resultado_gestion_30d (fuga),LogReg,0.949,0.927,0.971,0.857,0.592,0.997,0.063
-0,+ resultado_gestion_30d (fuga),LightGBM,0.937,0.905,0.961,0.835,0.578,0.959,0.07
-0,+ todas (incl. dias_hasta_renovacion),LogReg,0.997,0.993,1.0,0.991,0.631,1.022,0.013
-0,+ todas (incl. dias_hasta_renovacion),LightGBM,1.0,1.0,1.0,1.0,0.634,1.001,0.0
+1,Limpio ex ante (15 vars),LogReg,0.82,0.784,0.846,0.526,0.448,0.907,0.129
+1,Limpio ex ante (15 vars),LightGBM,0.791,0.768,0.815,0.489,0.434,0.777,0.137
+1,Ex ante + remesas + contactabilidad + regional,LogReg,0.821,0.786,0.847,0.534,0.455,0.906,0.128
+1,Ex ante + remesas + contactabilidad + regional,LightGBM,0.794,0.763,0.82,0.485,0.444,0.776,0.137
+1,+ resultado_gestion_30d (fuga),LogReg,0.944,0.931,0.965,0.846,0.594,0.991,0.067
+1,+ resultado_gestion_30d (fuga),LightGBM,0.927,0.9,0.944,0.797,0.587,0.934,0.076
+1,+ todas (incl. dias_hasta_renovacion),LogReg,0.997,0.994,1.0,0.99,0.647,1.029,0.015
+1,+ todas (incl. dias_hasta_renovacion),LightGBM,1.0,1.0,1.0,1.0,0.647,1.0,0.0
+0,Limpio ex ante (15 vars),LogReg,0.822,0.789,0.852,0.518,0.444,0.894,0.128
+0,Limpio ex ante (15 vars),LightGBM,0.799,0.761,0.824,0.482,0.437,0.778,0.134
+0,Ex ante + remesas + contactabilidad + regional,LogReg,0.823,0.79,0.851,0.521,0.447,0.893,0.127
+0,Ex ante + remesas + contactabilidad + regional,LightGBM,0.798,0.766,0.818,0.491,0.433,0.786,0.134
+0,+ resultado_gestion_30d (fuga),LogReg,0.949,0.927,0.972,0.859,0.592,0.998,0.062
+0,+ resultado_gestion_30d (fuga),LightGBM,0.94,0.902,0.968,0.838,0.584,0.96,0.069
+0,+ todas (incl. dias_hasta_renovacion),LogReg,0.997,0.992,1.0,0.991,0.631,1.024,0.013
+0,+ todas (incl. dias_hasta_renovacion),LightGBM,1.0,1.0,1.0,1.0,0.634,1.0,0.0

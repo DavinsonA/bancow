@@ -16,9 +16,9 @@ df["dhr"] = df.dias_hasta_renovacion.fillna(-1)
 df["reg"] = df.regional.astype("category").cat.codes
 EXANTE = ["antiguedad_meses","saldo_actual","max_mora_6m","productos_activos","saldo_ahorros",
           "ticket_promedio","tasa_actual_ea","score_buro","consultas_buro_3m","endeudamiento_proxy",
-          "rentabilidad_12m","respondio_oferta_previa","dias_ultimo_contacto","uso_digital_score","quejas_90d","visitas_oficina_90d"]
+          "rentabilidad_12m","respondio_oferta_previa","uso_digital_score","quejas_90d","visitas_oficina_90d"]
 # excluidas del set limpio: recibe_remesas (uso responsable), contactabilidad_score (sesgo operacional), regional (capacidad, no ranking),
-# cuotas_pagadas_pct y monto_preaprobado (timestamp sin certificar; AUC univariado 0,52-0,53)
+# cuotas_pagadas_pct, monto_preaprobado y dias_ultimo_contacto (timestamp sin certificar; AUC univariado 0,50-0,53)
 CLEAN = f"Limpio ex ante ({len(EXANTE)} vars)"
 SETS = {
  CLEAN: EXANTE,
@@ -73,6 +73,19 @@ print("\nTest 06-08: n=",len(te),"AUC=",round(roc_auc_score(te.renovo_30d, te.p_
 te["sel"] = te.p_renov >= te.p_renov.quantile(0.68)
 sr = te.groupby("regional").sel.mean().round(3)
 print("\nTasa de selección top-32% por regional:"); print(sr.to_string()); print(f"AIR regional (min/max) = {sr.min()/sr.max():.2f} ({sr.idxmin()} vs {sr.idxmax()})")
+# Bootstrap del AIR regional (2.000 remuestreos de la muestra de test; selección top-32% recalculada en cada uno)
+rng=np.random.default_rng(7); B=2000; airs=[]
+pv=te.p_renov.values; rv=te.regional.values; regs=sorted(te.regional.unique())
+for _ in range(B):
+    idx=rng.integers(0,len(te),len(te)); p=pv[idx]; r=rv[idx]; sel=p>=np.quantile(p,0.68)
+    rates=np.array([sel[r==g].mean() for g in regs]); airs.append(rates.min()/rates.max())
+lo,hi=np.percentile(airs,[2.5,97.5])
+def wilson(k,n,z=1.96):
+    p=k/n; d=1+z*z/n; c=(p+z*z/(2*n))/d; h=z*np.sqrt(p*(1-p)/n+z*z/(4*n*n))/d; return c-h,c+h
+air=pd.DataFrame([dict(regional=g, n=int((te.regional==g).sum()), seleccionados=int(te.sel[te.regional==g].sum()), tasa=round(te.sel[te.regional==g].mean(),3),
+                       ic_inf=round(wilson(te.sel[te.regional==g].sum(),(te.regional==g).sum())[0],3), ic_sup=round(wilson(te.sel[te.regional==g].sum(),(te.regional==g).sum())[1],3)) for g in regs])
+air["AIR_puntual"]=round(sr.min()/sr.max(),3); air["AIR_ic_inf"]=round(lo,3); air["AIR_ic_sup"]=round(hi,3); air["bootstrap"]=B
+print(f"AIR bootstrap ({B} remuestreos): IC 95 % percentil = [{lo:.2f}, {hi:.2f}]"); print(air.to_string(index=False)); air.to_csv("work/output/air_regional.csv", index=False)
 print("por recibe_remesas:"); print(te.groupby("recibe_remesas").sel.mean().round(3).to_string())
 print("por cuartil contactabilidad:"); print(te.groupby(pd.qcut(te.contactabilidad_score,4)).sel.mean().round(3).to_string())
 print("por tercil score_buro:"); print(te.groupby(pd.qcut(te.score_buro,3)).sel.mean().round(3).to_string())
