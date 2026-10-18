@@ -13,6 +13,8 @@ Solución al reto descrito en `docs/Prueba_Tecnica_Cientifico_Datos_BancoW.pdf`.
 | `work/03_economia_capacidad_piloto.py` | Valor esperado por alternativa, sensibilidad, asignación con capacidad regional y tamaños de muestra del piloto. |
 | `work/output/` | Salidas de los tres scripts (txt y csv). |
 | `work/deck/build_deck.js` | Generador del PPT (pptxgenjs). |
+| `work/deck/qa_deck.py` | QA de densidad del deck con python-pptx: ≤ 140 palabras fuera de tablas, cuerpo ≥ 11 pt, tablas ≥ 10 pt y ≤ 5 filas (monitoreo ≤ 6), notas en todas las slides. |
+| `requirements.txt` | Versiones fijadas de Python. |
 
 ## Reglas respetadas
 
@@ -22,13 +24,25 @@ Solución al reto descrito en `docs/Prueba_Tecnica_Cientifico_Datos_BancoW.pdf`.
 ## Reproducir
 
 ```bash
-python -I work/01_diagnostico.py
-python -I work/02_modelos_fuga.py
-python -I work/03_economia_capacidad_piloto.py
+pip install -r requirements.txt
+python work/01_diagnostico.py > work/output/01_diagnostico.txt
+python work/02_modelos_fuga.py > work/output/02_modelos_fuga.txt
+python work/03_economia_capacidad_piloto.py > work/output/03_economia.txt
 cd work/deck && npm install && NODE_PATH="$PWD/node_modules" node build_deck.js
+cd ../.. && python work/deck/qa_deck.py   # densidad: palabras, fuentes, filas, notas (exit 1 si falla)
 ```
 
-Requisitos: Python 3.13 con pandas, scikit-learn, lightgbm, scipy, openpyxl; Node 22.
+Requisitos: Python 3.13 con las versiones fijadas en `requirements.txt`; Node 22. Las salidas se escriben en UTF-8.
+
+## Supuestos externos y fuentes
+
+| Supuesto | Valor usado | Fuente |
+|---|---|---|
+| Escala del score de buró | DataCrédito 150–950 (observado 352–912, dentro del rango). Pendiente confirmar central, versión y vigencia | Experian DataCrédito Colombia, documentación pública del score Acierta |
+| Economía por renovación | Contribución COP 420.000; pérdida por mora 30+ COP 1.800.000; horizonte 30 días | Enunciado de la prueba (PDF) |
+| Universo y capacidad | 25.000 clientes/mes; 8.000 contactos; capacidad por regional de `Capacidad_Regional` | Anexo Excel |
+| Conversión orgánica del holdout | 2,3 % (tasa de renovación entre «No contactado» en la base) | `work/output/01_diagnostico.txt` |
+| Tamaño de las cifras de la hoja de modelos | 8.000 contactos por alternativa; 752 y 704 renovados en A y B | Supuesto para calcular errores estándar (`incertidumbre_AB.csv`) |
 
 ## Conclusión en una frase
 
