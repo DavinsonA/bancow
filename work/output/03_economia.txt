@@ -1,0 +1,59 @@
+=== Valor esperado mensual sobre 8.000 contactos (COP millones). m*=C/L = 0.233
+              alt  conv_top8k  mora_renov  renovaciones  mora_usada  contrib_bruta_M  costo_riesgo_M  VE_neto_M  VE_por_renov  delta_vs_actual_M
+           Actual        0.04        0.05         288.0        0.05           120.96           26.44      94.52      328200.0               0.00
+        A XGBoost        0.09        0.07         752.0        0.07           315.84           97.46     218.38      290400.0             123.86
+         B LogReg        0.09        0.05         704.0        0.05           295.68           58.29     237.39      337200.0             142.87
+C LightGBM (fuga)        0.15        0.06        1184.0        0.06           497.28          136.40     360.88      304800.0             266.36
+         D Uplift        0.08         NaN         632.0        0.05           265.44           58.02     207.42      328200.0             112.90
+
+D: valor INCREMENTAL atribuible al contacto si +3,1 pp es uplift de conversión: 248 renov x 328k = 81.4 M COP/mes
+A supera a B solo si su mora entre renovados < 5.796% (reportada 7,2 %)
+
+Sensibilidad VE (M COP) a L:
+alt      A      B
+L_M              
+1.0  261.7  263.3
+1.8  218.4  237.4
+2.5  180.5  214.7
+3.5  126.3  182.3
+
+Escenario de no incrementalidad (B): valor neto si una fracción de las 704 renovaciones era orgánica
+  organicas=0%: VE_incremental = 237.4 M
+  organicas=25%: VE_incremental = 178.0 M
+  organicas=50%: VE_incremental = 118.7 M
+  organicas=75%: VE_incremental = 59.3 M
+
+=== Capacidad vs universo estimado por regional ===
+    regional  cap  conv_hist  mora_hist  share_cap  share_muestra  universo_est  cobertura_cap
+Suroccidente 2600      0.042      0.054      0.325          0.297        7435.0          0.350
+      Centro 1900      0.035      0.047      0.238          0.228        5711.0          0.333
+       Norte 1200      0.026      0.068      0.150          0.172        4310.0          0.278
+Eje Cafetero 1000      0.038      0.049      0.125          0.144        3592.0          0.278
+     Oriente 1300      0.031      0.055      0.162          0.158        3951.0          0.329
+
+=== Lista operativa: ranking global vs cuotas (muestra test 06-08) ===
+                      esquema   n  renov_obs  conv  VE_medio_k  n_Suroccidente  n_Centro  n_Norte  n_Eje Cafetero  n_Oriente
+       Ranking global top 32% 223         97 0.435       149.6              65        59       40              32         27
+Cuotas por capacidad regional 222         93 0.419       149.1              72        53       33              28         36
+    regional  cap  contactos_si_global  exceso_vs_cap
+Suroccidente 2600               2332.0         -268.0
+      Centro 1900               2117.0          217.0
+       Norte 1200               1435.0          235.0
+Eje Cafetero 1000               1148.0          148.0
+     Oriente 1300                969.0         -331.0
+
+VE marginal (k COP) del último cliente que entra por regional bajo cuotas:
+regional
+Centro          84.6
+Eje Cafetero    89.6
+Norte           92.8
+Oriente         60.1
+Suroccidente    65.9
+
+=== Tamaño por brazo (alpha 5%, potencia 80%) ===
+  3,6% -> 4,5% (+25% rel): n/brazo = 7,530
+  3,6% -> 5,4% (+50% rel): n/brazo = 2,081
+  3,6% -> 7,2% (x2): n/brazo = 618
+  3,6% -> 8,8% (B reportado): n/brazo = 336
+  mora 5,1% -> 7,2% (entre renovados): n/brazo = 2,053
+  holdout: organico 2,3% -> 5% contactados: n/brazo = 756

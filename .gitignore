@@ -1,0 +1,12 @@
+# Node
+work/deck/node_modules/
+# Renders de QA (regenerables desde el PPT)
+work/deck/render/
+# Python
+__pycache__/
+*.pyc
+# Office temporales
+~$*
+# OS
+.DS_Store
+Thumbs.db

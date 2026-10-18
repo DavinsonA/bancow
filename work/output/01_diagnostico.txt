@@ -1,0 +1,184 @@
+shape (1800, 28)
+
+--- cortes:
+mes_corte
+2026-01    221
+2026-02    214
+2026-03    204
+2026-04    254
+2026-05    211
+2026-06    228
+2026-07    225
+2026-08    243
+Name: count, dtype: int64
+
+--- regional:
+regional
+Suroccidente    543
+Centro          439
+Norte           308
+Oriente         282
+Eje Cafetero    228
+Name: count, dtype: int64
+
+--- target global: 0.2022 364
+
+--- target por corte:
+            mean  sum  count
+mes_corte                   
+2026-01    0.222   49    221
+2026-02    0.182   39    214
+2026-03    0.201   41    204
+2026-04    0.185   47    254
+2026-05    0.223   47    211
+2026-06    0.197   45    228
+2026-07    0.204   46    225
+2026-08    0.206   50    243
+
+--- target por regional:
+               mean  sum  count
+regional                       
+Centro        0.196   86    439
+Eje Cafetero  0.206   47    228
+Norte         0.205   63    308
+Oriente       0.181   51    282
+Suroccidente  0.215  117    543
+
+--- mora30 entre renovados: {'mean': 0.0082, 'sum': 3.0, 'count': 364.0}
+    mora30 entre NO renovados: {'sum': 0, 'count': 1436}
+
+--- duplicados exactos: 1 | cliente_id duplicados: 1
+     cliente_id mes_corte regional  renovo_30d
+1198     C01199   2026-04  Oriente           0
+1199     C01199   2026-04  Oriente           0
+
+--- nulos:
+dias_hasta_renovacion    1436
+dtype: int64
+
+--- rangos:
+                                 min           max         mean
+antiguedad_meses               1.000  8.200000e+01       30.577
+saldo_actual              849230.000  3.724317e+07  6620781.232
+cuotas_pagadas_pct             0.210  9.930000e-01        0.751
+max_mora_6m                   -4.000  1.400000e+02       14.070
+productos_activos              1.000  4.000000e+00        1.634
+saldo_ahorros            -350000.000  1.045504e+07   620202.156
+recibe_remesas                 0.000  1.000000e+00        0.207
+ticket_promedio           500000.000  1.461988e+07  6585257.244
+tasa_actual_ea                 0.222  5.960000e-01        0.389
+monto_preaprobado         821925.000  4.808039e+07  7265900.470
+score_buro                   352.000  9.120000e+02      616.415
+consultas_buro_3m              0.000  6.000000e+00        1.177
+endeudamiento_proxy            0.100  1.400000e+00        0.570
+rentabilidad_12m        -1416171.000  2.344374e+06   700378.322
+respondio_oferta_previa        0.000  1.000000e+00        0.415
+contactabilidad_score          0.091  9.850000e-01        0.629
+dias_ultimo_contacto           0.000  3.990000e+02       36.033
+uso_digital_score              0.020  9.900000e-01        0.482
+quejas_90d                     0.000  3.000000e+00        0.161
+visitas_oficina_90d            0.000  5.000000e+00        0.988
+dias_hasta_renovacion          0.000  2.900000e+01       14.503
+renovo_30d                     0.000  1.000000e+00        0.202
+mora30_post_renovacion         0.000  1.000000e+00        0.002
+
+--- checks de validez: {'max_mora_6m<0': np.int64(1), 'saldo_ahorros<0': np.int64(1), 'endeudamiento_proxy>1': np.int64(25), 'score_buro fuera 400-850': np.int64(7), 'cuotas_pagadas_pct fuera 0-1': np.int64(0), 'tasa_actual_ea rango': (np.float64(0.2225), np.float64(0.5961)), 'rentabilidad_12m<0': np.int64(164), 'monto_preaprobado<=0': np.int64(0), 'antiguedad_meses<=1': np.int64(105)}
+
+--- fecha_ultimo_contacto > inicio corte: 1 | max fecha: 2026-09-15
+    fecha_ultimo_contacto dentro del mes de corte (>= inicio): 51
+    corr(dias_ultimo_contacto, inicio_corte - fecha): 0.9933
+
+--- resultado_gestion_30d x renovo_30d:
+renovo_30d                0    1   All   tasa
+resultado_gestion_30d                        
+Acepta                   72  256   328  0.780
+Interesado              163   65   228  0.285
+No acepta               658   30   688  0.044
+No contactado           543   13   556  0.023
+All                    1436  364  1800  0.202
+
+--- dias_hasta_renovacion nulo por clase:
+renovo_30d
+0    1.0
+1    0.0
+Name: dias_hasta_renovacion, dtype: float64
+    rango dias_hasta_renovacion renovados: {'min': 0.0, 'max': 29.0}
+
+--- renovaron sin contacto: 0.0234 (13/556)  | contactados: 0.2822 (351/1244)
+    % no contactados por regional:
+regional
+Centro          0.273
+Eje Cafetero    0.294
+Norte           0.347
+Oriente         0.309
+Suroccidente    0.322
+dtype: float64
+    contactabilidad media por regional:
+regional
+Centro          0.628
+Eje Cafetero    0.618
+Norte           0.638
+Oriente         0.624
+Suroccidente    0.633
+Name: contactabilidad_score, dtype: float64
+    contactabilidad por resultado_gestion:
+resultado_gestion_30d
+Acepta           0.642
+Interesado       0.627
+No acepta        0.628
+No contactado    0.624
+Name: contactabilidad_score, dtype: float64
+
+--- AUC univariado:
+                     variable  auc_univariado   corr
+        dias_hasta_renovacion           1.000  0.850
+resultado_gestion_30d(Acepta)           0.827  0.680
+                   score_buro           0.805  0.425
+      respondio_oferta_previa           0.686  0.303
+                  max_mora_6m           0.567 -0.125
+            productos_activos           0.531  0.052
+                 saldo_actual           0.530 -0.029
+             antiguedad_meses           0.526 -0.038
+           cuotas_pagadas_pct           0.526  0.031
+            monto_preaprobado           0.523 -0.026
+                   quejas_90d           0.522 -0.028
+          visitas_oficina_90d           0.521  0.034
+        contactabilidad_score           0.516  0.024
+               tasa_actual_ea           0.515 -0.024
+          endeudamiento_proxy           0.513  0.031
+            uso_digital_score           0.509  0.012
+               recibe_remesas           0.506 -0.011
+             rentabilidad_12m           0.505 -0.020
+                saldo_ahorros           0.504  0.025
+            consultas_buro_3m           0.503 -0.012
+              ticket_promedio           0.502 -0.006
+         dias_ultimo_contacto           0.501 -0.013
+
+--- renovación por recibe_remesas:
+                 mean  count
+recibe_remesas              
+0               0.204   1428
+1               0.194    372
+--- renovación por cuartil contactabilidad:
+                        mean  count
+contactabilidad_score              
+(0.09, 0.501]          0.189    450
+(0.501, 0.647]         0.201    457
+(0.647, 0.767]         0.213    446
+(0.767, 0.985]         0.206    447
+--- no contactado por cuartil contactabilidad:
+contactabilidad_score
+(0.09, 0.501]     0.322
+(0.501, 0.647]    0.293
+(0.647, 0.767]    0.303
+(0.767, 0.985]    0.318
+dtype: float64
+--- score_buro medio por renovo: {0: 599.3, 1: 683.9}
+--- mora30 por score_buro tercil (renovados):
+                   mean  sum  count
+score_buro                         
+(468.999, 656.0]  0.008    1    123
+(656.0, 715.0]    0.000    0    120
+(715.0, 912.0]    0.017    2    121
+
+--- 8000/25000 = 0.32 | top 32% de la muestra = 576

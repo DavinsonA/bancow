@@ -1,0 +1,47 @@
+=== Validación out-of-time rolling (train < t, test = t, t = 2026-04..08). Prevalencia 20,2 %; top32 = 8k/25k ===
+                                      conjunto   modelo  auc_oot  auc_min  auc_max  pr_auc  conv_top32  brier
+                      Limpio ex ante (18 vars)   LogReg    0.820    0.786    0.853   0.516       0.446  0.128
+                      Limpio ex ante (18 vars) LightGBM    0.797    0.757    0.825   0.487       0.423  0.134
+Ex ante + remesas + contactabilidad + regional   LogReg    0.822    0.788    0.853   0.522       0.446  0.127
+Ex ante + remesas + contactabilidad + regional LightGBM    0.793    0.756    0.826   0.491       0.440  0.135
+                + resultado_gestion_30d (fuga)   LogReg    0.949    0.927    0.971   0.859       0.589  0.062
+                + resultado_gestion_30d (fuga) LightGBM    0.940    0.903    0.966   0.839       0.578  0.069
+         + todas (incl. dias_hasta_renovacion)   LogReg    0.997    0.993    1.000   0.991       0.628  0.014
+         + todas (incl. dias_hasta_renovacion) LightGBM    1.000    1.000    1.000   1.000       0.634  0.000
+LogReg k-fold aleatorio AUC = 0.824 (vs OOT arriba)
+LightGBM k-fold aleatorio AUC = 0.810 (vs OOT arriba)
+
+Coeficientes estandarizados LogReg limpio:
+score_buro                 1.299
+max_mora_6m               -0.563
+respondio_oferta_previa    0.260
+productos_activos          0.145
+antiguedad_meses          -0.107
+quejas_90d                -0.095
+uso_digital_score          0.091
+rentabilidad_12m          -0.075
+
+Test 06-08: n= 696 AUC= 0.809
+
+Tasa de selección top-32% por regional:
+regional
+Centro          0.352
+Eje Cafetero    0.310
+Norte           0.367
+Oriente         0.245
+Suroccidente    0.314
+por recibe_remesas:
+recibe_remesas
+0    0.312
+1    0.348
+por cuartil contactabilidad:
+contactabilidad_score
+(0.152, 0.519]    0.299
+(0.519, 0.656]    0.318
+(0.656, 0.768]    0.324
+(0.768, 0.978]    0.341
+por tercil score_buro:
+score_buro
+(372.999, 582.667]    0.000
+(582.667, 654.333]    0.164
+(654.333, 835.0]      0.797
