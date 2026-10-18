@@ -66,7 +66,7 @@ Es la pregunta que más incertidumbre reduce: define si el histórico permite es
 2. **La base no es el universo**: 20,2 % de renovación frente a 3,6 % declarado; 1.800 filas en 8 cortes (204 a 254 por mes) frente a 25.000 por mes. «Conversión top 8k» no es calculable desde esta base: el top 32 % de la muestra son 576 filas.
 3. **Riesgo no modelable**: 3 moras en 364 renovados (0,8 %) frente a 4,6 % a 7,2 % en la hoja de modelos y 4,7 % a 6,8 % por regional. Además `mora30_post_renovacion` = 0 por construcción en no renovados (outcome observado solo bajo tratamiento).
 4. **Calidad y rangos**: 1 fila duplicada exacta (C01199, 2026-04); `max_mora_6m` = −4; `saldo_ahorros` = −350.000; 25 valores de `endeudamiento_proxy` > 1 (máx. 1,4); `score_buro` 352–912, dentro de la escala DataCrédito (150–950); pendiente confirmar qué central y versión de score es, porque las escalas difieren, y su vigencia; 164 clientes con rentabilidad negativa (plausible pero revisar).
-5. **Temporalidad**: 1 `fecha_ultimo_contacto` posterior al corte (2026-09-15 con corte 2026-08) y 51 dentro del mes de corte; `dias_ultimo_contacto` es redundante con la fecha (r = 0,99). El corte no está garantizado point-in-time; `cuotas_pagadas_pct` y `monto_preaprobado` no tienen timestamp y quedan fuera del set limpio.
+5. **Temporalidad**: 1 `fecha_ultimo_contacto` posterior al corte (2026-09-15 con corte 2026-08) y 51 dentro del mes de corte; `dias_ultimo_contacto` es redundante con la fecha (r = 0,99) y sale del set limpio con el mismo criterio: en producción se recalcula a la fecha de corte; hoy fuera del modelo (AUC univariado 0,50, sin costo de señal). El corte no está garantizado point-in-time; `cuotas_pagadas_pct` y `monto_preaprobado` no tienen timestamp y quedan fuera del set limpio.
 6. **Contactabilidad sin señal y con sesgo**: `contactabilidad_score` no predice el contacto efectivo (32 % de «No contactado» en todos los cuartiles) ni la renovación (AUC 0,52). Usarla reproduciría la política pasada sin aportar información.
 7. **Hoja de modelos con unidades mezcladas**: D reporta Qini en la columna PR-AUC y «+3,1 pp incremental» en la columna de mora. Sin intervalos, sin periodo de evaluación, sin definición de «estabilidad».
 8. **Señal concentrada**: `score_buro` (AUC 0,81) y `respondio_oferta_previa` (0,69) explican casi todo; las demás variables ex ante tienen AUC < 0,57. Un modelo complejo no tiene de dónde ganar.
@@ -76,7 +76,7 @@ Es la pregunta que más incertidumbre reduce: define si el histórico permite es
 | Categoría | Variables | Motivo y tratamiento |
 |---|---|---|
 | **Fuga / resultado** | `resultado_gestion_30d`, `dias_hasta_renovacion`, `mora30_post_renovacion`, `renovo_30d` | Codifican el resultado; solo como target o para evaluación |
-| **Disponibilidad temporal** | `fecha_ultimo_contacto` (1 fecha > corte), `cuotas_pagadas_pct` y `monto_preaprobado` sin timestamp | Fuera del set limpio. Excluirlas no cuesta señal (AUC univariado 0,52–0,53); se reincorporan cuando Tecnología certifique su timestamp |
+| **Disponibilidad temporal** | `fecha_ultimo_contacto` y su derivada `dias_ultimo_contacto` (51 contactos fechados dentro del mes de corte, 1 después), `cuotas_pagadas_pct` y `monto_preaprobado` sin timestamp | Fuera del set limpio (quedan 15 variables). Excluirlas no cuesta señal (AUC univariado 0,50–0,53); se reincorporan cuando Tecnología certifique su timestamp |
 | **Calidad** | `max_mora_6m` < 0, `saldo_ahorros` < 0, `endeudamiento_proxy` > 1, duplicado. `score_buro` 352–912 está dentro de DataCrédito 150–950 | Reglas de validación en el pipeline; corregir o imputar con registro; `dias_ultimo_contacto` se deriva de la fecha, no se usa doble; confirmar central, versión y vigencia del score de buró |
 | **Uso responsable y sesgo** | `recibe_remesas` (proxy socioeconómico, r = −0,01 con el target: riesgo sin beneficio), `contactabilidad_score` (sesgo operacional), `regional` (solo para capacidad), `cliente_id` | Fuera del score; monitoreadas como grupos de equidad |
 | **Con condición** | `score_buro` | Es la variable dominante; verificar vigencia, rango y que la autorización del titular cubra la finalidad comercial (Ley 1266/2008 y Ley 2157/2021: uso limitado al análisis de riesgo crediticio) |
@@ -89,7 +89,7 @@ El modelo se usará cada mes para puntuar un corte nuevo, así que la validació
 - **Gap de un corte completo** (≈ 30 días) entre el último corte de entrenamiento y el de prueba: el target madura a 30 días y la mora 30+ post-renovación necesita 30 a 60 días más. En producción, el modelo de un corte solo puede haberse entrenado con cortes cuyo label ya esté maduro. La versión sin gap se conserva como sensibilidad en `work/output/replica_modelos_oot.csv` (`gap = 0`).
 - **Cifra comunicada**: la media y el rango de las ventanas rolling; no se ajustaron hiperparámetros sobre ellas.
 - **Por cliente**: deduplicar (C01199); si un cliente apareciera en varios cortes, agrupar por `cliente_id` (en esta base cada cliente aparece una sola vez).
-- Resultado [C]: AUC fuera de tiempo 0,82 (rango 0,78–0,85) con regresión logística limpia de 16 variables; sin gap 0,82 (0,79–0,85); k-fold aleatorio da 0,82 también en este caso, pero el temporal es el que habilita comparar con las cifras reportadas y detecta inestabilidad entre meses.
+- Resultado [C]: AUC fuera de tiempo 0,82 (rango 0,78–0,85) con regresión logística limpia de 15 variables; sin gap 0,82 (0,79–0,85); k-fold aleatorio da 0,82 también en este caso, pero el temporal es el que habilita comparar con las cifras reportadas y detecta inestabilidad entre meses.
 
 ### P8. Desbalance y el error de evaluar con accuracy
 
@@ -105,7 +105,7 @@ El modelo se usará cada mes para puntuar un corte nuevo, así que la validació
 
 | Alt. | Evidencia | Veredicto |
 |---|---|---|
-| **C** LightGBM, AUC 0,94, conv. 14,8 %, mora 6,4 % | «Incluye todas las variables porque mejoraron la precisión» [E]. Réplica [C]: con las 16 variables ex ante el AUC fuera de tiempo es 0,79 (LightGBM) y 0,82 (logística); al agregar `resultado_gestion_30d` sube a 0,93–0,94; con `dias_hasta_renovacion`, 1,00. El 0,94 reportado es exactamente lo que produce la fuga. Esa información no existe cuando se prioriza. | **Descartar** |
+| **C** LightGBM, AUC 0,94, conv. 14,8 %, mora 6,4 % | «Incluye todas las variables porque mejoraron la precisión» [E]. Réplica [C]: con las 15 variables ex ante el AUC fuera de tiempo es 0,79 (LightGBM) y 0,82 (logística); al agregar `resultado_gestion_30d` sube a 0,93–0,94; con `dias_hasta_renovacion`, 1,00. El 0,94 reportado es exactamente lo que produce la fuga. Esa información no existe cuando se prioriza. | **Descartar** |
 | **A** XGBoost, AUC 0,86, conv. 9,4 %, mora 7,2 % | Variables «supuestamente» disponibles [E]. 0,86 supera lo que esta base permite replicar (0,82; 0,85 en el mejor corte), pero la hoja viene de otra población, así que no es concluyente. Su mora reportada 7,2 % es la peor de todas y peor que la actual (5,1 %); de ser real, convierte a A en la alternativa de menor valor entre los modelos. Ambas cosas exigen auditoría variable por variable (fuente, timestamp, disponibilidad al puntuar). Estabilidad «media». | **Mantener en banca, condicionado a la ficha de fuga variable por variable** |
 | **B** Logística, AUC 0,79, conv. 8,8 %, mora 4,6 % | Coherente con la réplica limpia (0,78–0,85), «simple y calibrado», estabilidad alta, la menor mora. Auditable y explicable ante Riesgos. | **Piloto como challenger, tras la misma ficha de fuga variable por variable que se exige a A** |
 | **D** Uplift, Qini 0,12, conv. 7,9 %, «+3,1 pp incremental» | Único que mide efecto del contacto, que es lo que de verdad importa. Pero: unidades mezcladas en la hoja, campaña «parcialmente aleatorizada» sin fracción, unidad ni cumplimiento conocidos, sin intervalos. | **Mantener como brazo de aprendizaje**: evaluarlo en el holdout aleatorizado del piloto y reentrenarlo con esos datos |
@@ -130,7 +130,7 @@ Lecturas: B supera a A pese a convertir menos porque cada renovación de B vale 
 
 Limitaciones del cálculo:
 
-1. **No es incremental**: las conversiones «top 8k» incluyen renovaciones que ocurrirían sin contacto. Si la mitad de las 704 de B son orgánicas, el valor baja a 119 M; si tres cuartos, a 59 M.
+1. **No es incremental**: las conversiones «top 8k» incluyen renovaciones que ocurrirían sin contacto. Hipótesis de orgánico coherente con el holdout (P13): el top de B sale del tercil alto de buró, donde 5,4 % de los no contactados renovó solo (7 de 129; IC Wilson 2,7–10,8 %; `work/output/organico_por_buro.csv`). Con orgánico ≈ 5 % sobre una conversión de 8,8 %, ≈ 57 % de las 704 renovaciones de B serían orgánicas y el valor incremental baja a ≈ 103 M (129 M con 4 %, 76 M con 6 %; `work/output/organico_implicito.csv`). «La mitad» es el redondeo de esa fracción.
 2. Las conversiones «top 8k» **no salen de esta base** (20,2 % de prevalencia; el top 32 % de un modelo limpio da 45 % en muestra) y no sabemos con qué población, periodo ni política de contacto se calcularon.
 3. La **mora por alternativa no es verificable** (3 eventos en la base) y mora 30 no es pérdida: falta LGD, exposición y horizonte.
 4. **Costo de contacto omitido** (igual para todas, no cambia el orden pero sí el nivel), C y L constantes pese a heterogeneidad de monto y tasa, mezcla regional ignorada, sin intervalos de confianza.
@@ -167,17 +167,19 @@ Limitaciones del cálculo:
   1. *Calidad de lista*: conversión por contacto challenger − champion ≥ +1,5 pp con IC 95 % que excluya 0.
   2. *Efecto del contacto*: conversión challenger contactado − holdout > 0 con IC 95 % que excluya 0.
 - **Potencia de la calidad de lista** (α 5 %, 80 %) [C]: 3,6 % a 5,4 % se detecta con 2.081 por brazo (un mes); 3,6 % a 4,5 % exige 7.530 (dos meses de 4.000).
+- **Baseline del holdout**: no es el 2,3 % orgánico global (todos los no contactados), porque el holdout se extrae del top de B, dominado por el tercil alto de buró. Allí el orgánico observado es 5,4 % (7 de 129 no contactados; IC Wilson 2,7–10,8 %, ancho por los pocos eventos) frente a 53 % entre contactados del mismo tercil; en el tercil bajo, 1 de 224 [C]. Se usa 5 % como baseline central y se sensibiliza a 4 % y 6 %.
 - **Potencia y costo del holdout** [C] (`work/output/potencia_holdout.csv`; 800 de holdout frente a 4.000 contactados; costo = 800 × uplift × 337.200):
 
-| Uplift (orgánico 2,3 % →) | n holdout | Meses a 800/mes | Costo de oportunidad |
-|---|---|---|---|
-| 3,5 % (+1,2 pp) | 1.932 | 2,4 | 3,2 M/mes |
-| 4,0 % (+1,7 pp) | 1.056 | 1,3 | 4,6 M/mes |
-| 4,5 % (+2,2 pp) | 685 | 0,9 | 5,9 M/mes |
-| 5,0 % (+2,7 pp) | 491 | 0,6 | 7,3 M/mes |
+| Baseline | Uplift | n holdout | Meses a 800/mes | Costo de oportunidad | Escenario |
+|---|---|---|---|---|---|
+| 4 % | +1,7 / +2,5 / +3,8 pp | 1.566 / 790 / 387 | 2,0 / 1,0 / 0,5 | 4,6 / 6,7 / 10,3 M/mes | |
+| 5 % | +1,7 pp | 1.856 | 2,3 | 4,6 M/mes | conservador |
+| 5 % | +2,5 pp | 923 | 1,2 | 6,7 M/mes | |
+| 5 % | +3,8 pp | 444 | 0,6 | 10,3 M/mes | plausible |
+| 6 % | +1,7 / +2,5 / +3,8 pp | 2.140 / 1.053 / 499 | 2,7 / 1,3 / 0,6 | 4,6 / 6,7 / 10,3 M/mes | |
 
-  Uplift plausible: +1,7 pp, la mitad de los +3,1 pp que reporta D (cuya evidencia es incompleta). Dos meses de asignación lo detectan con margen; si el uplift real fuera de +1,2 pp, haría falta un tercer mes. El costo (≤ 2 % del VE mensual de B) es el precio de saber si el contacto crea renovaciones.
-- **Limitación explícita**: sin holdout en el champion no se compara la incrementalidad de las dos políticas, solo la del challenger. Opción: retener también 400 al azar del champion (3.600 contactados en ese brazo); cuesta ≈ 400 × 1,7 % × 337.200 ≈ 2,3 M/mes y necesitaría más meses para la misma potencia.
+  El escenario plausible (+3,8 pp) es el uplift implícito si B convierte 8,8 % entre contactados sobre un orgánico de ≈ 5 %: es la misma hipótesis con la que P10 estima que ≈ 57 % de las renovaciones de B son orgánicas. Dos meses de asignación lo detectan con margen; el escenario conservador (+1,7 pp) necesitaría un tercer mes. El costo (≤ 4 % del VE mensual de B) es el precio de saber si el contacto crea renovaciones.
+- **Limitación explícita**: sin holdout en el champion no se compara la incrementalidad de las dos políticas, solo la del challenger. Opción: retener también 400 al azar del champion (3.600 contactados en ese brazo); cuesta ≈ 400 × 1,7 % × 337.200 ≈ 2,3 M/mes (5,1 M/mes a +3,8 pp) y necesitaría más meses para la misma potencia.
 - **El riesgo no se prueba en el piloto**: distinguir mora 5,1 % de 7,2 % exige 2.053 renovados por brazo (varios meses). Por eso el riesgo entra como **política dura** y se vigila con curvas vintage.
 - **Duración**: dos meses de asignación + 30 días de ventana + 30 a 60 de maduración de mora; decisión a los 90 días. Reglas ship/no-ship pre-registradas (slide 5). Chequeo de SRM semanal; un gestor no atiende dos brazos del mismo cliente; CUPED con la tasa histórica del cliente para reducir varianza.
 - **Guardrails de salida**: mora no inferior (+1 pp), quejas no inferiores, ≥ 90 % de lista ejecutada por regional, aleatorización cumplida (SRM) y datos del corte sin fallos.
@@ -188,21 +190,21 @@ Simulación con el modelo limpio sobre los cortes junio–agosto (n = 696), VE_i
 
 | Regional | Capacidad | Contactos si ranking global | Diferencia | VE marginal (último que entra) |
 |---|---|---|---|---|
-| Suroccidente | 2.600 | ≈ 2.400 | ≈ −200 ociosos | 61 k |
-| Centro | 1.900 | ≈ 2.100 | ≈ +200 sin gestor | 80 k |
-| Norte | 1.200 | ≈ 1.300 | ≈ +100 sin gestor | 86 k |
-| Eje Cafetero | 1.000 | ≈ 1.100 | ≈ +100 sin gestor | 81 k |
-| Oriente | 1.300 | ≈ 1.100 | ≈ −200 ociosos | 61 k |
+| Suroccidente | 2.600 | ≈ 2.400 | ≈ −200 ociosos | 65 k |
+| Centro | 1.900 | ≈ 2.100 | ≈ +200 sin gestor | 79 k |
+| Norte | 1.200 | ≈ 1.300 | ≈ +100 sin gestor | 85 k |
+| Eje Cafetero | 1.000 | ≈ 1.100 | ≈ +100 sin gestor | 82 k |
+| Oriente | 1.300 | ≈ 1.100 | ≈ −200 ociosos | 65 k |
 
 Cifras redondeadas a centenas: aproximación que asume que la mezcla regional de la muestra de test (n = 696) es la del universo. Un ranking global con corte único sobrecarga tres regionales y deja ociosos ≈ 400 cupos en otras dos. Propuesta:
 
 1. **Score de valor, no de propensión**: VE_i con mora y contactabilidad históricas de la regional.
 2. **Cuotas por regional**: cada regional llena su capacidad con su propio ranking de VE.
-3. **Transferencia por valor marginal**: cupos de la regional con menor VE marginal (Oriente, 61 k) a la de mayor (Norte, 86 k), con un tope de transferencia a pactar con Comercial (p. ej., 10 % de la cuota), si la operación lo permite (Norte tiene menor contactabilidad y mayor dispersión [E]).
+3. **Transferencia por valor marginal**: cupos de las regionales con menor VE marginal (Oriente y Suroccidente, 65 k) a la de mayor (Norte, 85 k), con un tope de transferencia a pactar con Comercial (p. ej., 10 % de la cuota), si la operación lo permite (Norte tiene menor contactabilidad y mayor dispersión [E]).
 4. **Lista semanal, no mensual**, en Centro para evitar la saturación de cierre de mes [E]; reasignación de la capacidad no ejecutada a mitad de mes.
 5. **Piso de cobertura** por regional como restricción de negocio explícita, y umbral mínimo de VE por contacto (no contactar si VE < costo de contacto).
 
-Dato ilustrativo, no evidencia: en muestra la conversión del top 32 % es equivalente con y sin cuotas (43,2 % vs. 42,6 %, una renovación de diferencia en 222 seleccionados, dentro del ruido). Lo que cambia es que la lista con cuotas es ejecutable; el ranking global «gana» en papel y pierde en la calle.
+Dato ilustrativo, no evidencia: en muestra la conversión del top 32 % es equivalente con y sin cuotas (41,9 % vs. 43,5 %, cuatro renovaciones de diferencia en 222 seleccionados, dentro del ruido). Lo que cambia es que la lista con cuotas es ejecutable; el ranking global «gana» en papel y pierde en la calle.
 
 ### P15. Monitoreo de los primeros tres meses
 
@@ -235,8 +237,8 @@ Dato ilustrativo, no evidencia: en muestra la conversión del top 32 % es equiva
 ### P17. Evaluar que la priorización no excluya sistemáticamente
 
 - **Tasa de selección por grupo** en cada corte: regional, `recibe_remesas`, cuartil de `contactabilidad_score`, tercil de `score_buro`, antigüedad, rural/urbano si existe. Regla de referencia 0,8 (adverse impact ratio) y comparación de conversión y calibración por grupo.
-- Sin cuotas, el modelo limpio queda en el límite de la regla 0,8 por regional (AIR ≈ 0,80 entre Oriente y Centro; 0,67 en la partición sin gap). Con cuotas, la selección por regional la fija la capacidad, así que la equidad se vigila en **conversión y calibración por grupo dentro de cada regional**, no en la tasa de selección entre regionales.
-- Hallazgo propio [C]: el modelo limpio selecciona 28 % en Oriente vs. 35 % en Centro, 35 % con remesas vs. 31 % sin, 29 % vs. 34 % entre cuartiles extremos de contactabilidad, y **79 % del tercil alto de buró frente a 0 % del bajo**. Esto último es una decisión de política de riesgo que debe fijarse de forma explícita con Riesgos (piso de acceso), no quedar escondida en el algoritmo.
+- Sin cuotas, el modelo limpio da un AIR puntual de 0,80 entre Oriente y Centro, pero con 100 a 200 clientes por regional el intervalo bootstrap (2.000 remuestreos de la muestra de test, `work/output/air_regional.csv`) es 0,49–0,88: tan ancho que el 0,80 puntual no informa, y el 0,67 de la partición sin gap cae dentro de él. La regla 0,8 está diseñada para el universo mensual de 25.000, donde el intervalo se estrecha unas seis veces (√(25.000/696) ≈ 6). Con cuotas, la selección por regional la fija la capacidad, así que la equidad se vigila en **conversión y calibración por grupo dentro de cada regional**, no en la tasa de selección entre regionales.
+- Hallazgo propio [C]: el modelo limpio selecciona 28 % en Oriente vs. 35 % en Centro (IC Wilson 21–37 % y 28–43 %), 34 % con remesas vs. 31 % sin, 29 % vs. 34 % entre cuartiles extremos de contactabilidad, y **79 % del tercil alto de buró frente a 0 % del bajo**. Esto último es una decisión de política de riesgo que debe fijarse de forma explícita con Riesgos (piso de acceso), no quedar escondida en el algoritmo.
 - **Contactabilidad**: no usarla en el score y medir, por brazo, qué fracción de la lista no se logra contactar por grupo; si el no contacto se concentra, ajustar canal (oficina, campo) antes que excluir.
 - **Feedback loop**: el holdout y la aleatorización dentro del top-k evitan que el modelo aprenda solo de quienes la política pasada contactó.
 - **Análisis de proxies**: intentar predecir el atributo sensible desde las features; si se puede, documentar y mitigar.
@@ -269,7 +271,7 @@ La presentación responde las seis preguntas en orden: decisión (slide 1), dato
 
 ### Respuestas de 30 segundos por área
 
-- **Presidencia**: pedimos aprobar un piloto de dos meses cuyo grupo de control cuesta unos 4,6 M al mes en renovaciones no buscadas y puede confirmar más de 140 M mensuales; sin control no sabremos si el valor es real.
+- **Presidencia**: pedimos aprobar un piloto de dos meses cuyo grupo de control cuesta entre 4,6 y 10 M al mes en renovaciones no buscadas; el valor bruto de B es +143 M, pero cerca de la mitad podría ser orgánico (≈ 103 M incrementales) y solo el control lo distingue.
 - **Comercial**: la lista será ejecutable por regional, semanal en Centro; el 12 % se redefine sobre contactos y neto de riesgo.
 - **Riesgos**: la mora entra como política dura y vintage; el modelo C no se libera; el score de buró requiere confirmar finalidad y autorización.
 - **Tecnología**: variables point-in-time, validaciones de esquema que bloquean, rollback y monitoreo con dueños desde el primer corte.

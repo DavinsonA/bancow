@@ -82,27 +82,27 @@ const tbl = (slide, rows, o) => slide.addTable(rows, { border: { type: "solid", 
 pres.addSection({ title: "Decisión" });
 let s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Decisión" });
 s.addText("1 · Decidir a quién contactar con 8.000 cupos al mes, no solo predecir quién renueva", { placeholder: "title" });
-card(s, { x: 0.5, y: 1.45, w: 3.95, h: 1.7, fill: HEX.mint, overline: "CAPACIDAD", value: "8.000 de 25.000", valueSize: 26, foot: "La restricción es la capacidad, no la demanda." });
-card(s, { x: 4.69, y: 1.45, w: 3.95, h: 1.7, overline: "HOY Y META", value: "3,6 % = 288", valueSize: 26, foot: "Meta 12 %: 960 o 3.000 según denominador." });
-card(s, { x: 8.88, y: 1.45, w: 3.95, h: 1.7, overline: "RIESGO", value: "1 mora = 4,3 sanas", valueSize: 26, foot: "Cada mora 30+ borra 4,3 sanas; equilibrio 23,3 %." });
+card(s, { x: 0.5, y: 1.45, w: 3.95, h: 1.85, fill: HEX.mint, overline: "CAPACIDAD", value: "8.000 de 25.000", valueSize: 26, foot: "La restricción es la capacidad, no la demanda." });
+card(s, { x: 4.69, y: 1.45, w: 3.95, h: 1.85, overline: "HOY Y META", value: "3,6 % = 288", valueSize: 26, foot: "Meta 12 %: 960 o 3.000 según denominador." });
+card(s, { x: 8.88, y: 1.45, w: 3.95, h: 1.85, overline: "RIESGO", value: "1 mora = 4,3 sanas", valueSize: 26, foot: "Cada mora 30+ borra 4,3 sanas; equilibrio 23,3 %." });
 
 bullets(s, [
   [{ text: "Decidir a quién contactar: ", bold: true }, { text: "los 8.000 de mayor valor incremental neto." }],
   [{ text: "Combinación: ", bold: true }, { text: "propensión calibrada × riesgo × valor; uplift a mediano plazo." }],
   [{ text: "Validar el 12 %: ", bold: true }, { text: "denominador, ventana, orgánicas (2,3 % renovó solo)." }],
   [{ text: "Pregunta única: ", bold: true }, { text: "¿cómo se eligió a quién contactar y qué pasó con el resto?" }],
-], { x: 0.5, y: 3.6, w: 6.6, h: 3.2, size: 12.5, gap: 8 });
+], { x: 0.5, y: 3.85, w: 6.6, h: 3.1, size: 14, gap: 30 });
 
-s.addShape(pres.ShapeType.roundRect, { x: 7.4, y: 3.6, w: 5.43, h: 1.05, fill: { color: HEX.posSoft }, line: { color: HEX.posSoft }, rectRadius: 0.1, objectName: "KPI" });
+s.addShape(pres.ShapeType.roundRect, { x: 7.4, y: 3.75, w: 5.43, h: 1.2, fill: { color: HEX.posSoft }, line: { color: HEX.posSoft }, rectRadius: 0.1, objectName: "KPI" });
 s.addText([{ text: "KPI: ", options: { bold: true } }, { text: "valor incremental neto por contacto = incrementales vs. control × (420.000 − mora × 1.800.000). " }, { text: "Proxy: ", options: { bold: true } }, { text: "incrementales por 1.000 contactos." }],
-  { ...TB, x: 7.55, y: 3.65, w: 5.15, h: 0.97, fontSize: 11, color: HEX.ink, valign: "middle" });
+  { ...TB, x: 7.55, y: 3.8, w: 5.15, h: 1.1, fontSize: 12, color: HEX.ink, valign: "middle" });
 bullets(s, [
   [{ text: "Riesgo: ", bold: true }, { text: "mora esperada de la lista ≤ umbral pactado antes (veto)." }],
   [{ text: "Experiencia: ", bold: true }, { text: "quejas y opt-out por 1.000 no peores (veto)." }],
   [{ text: "Equidad: ", bold: true }, { text: "selección por regional y grupo ≥ 0,8 (alerta)." }],
   [{ text: "Operación: ", bold: true }, { text: "≥ 90 % de lista ejecutada (alerta)." }],
   [{ text: "Confiabilidad: ", bold: true }, { text: "aleatorización y datos válidos (bloqueo)." }],
-], { x: 7.4, y: 4.85, w: 5.43, h: 2.0, size: 11.5, gap: 4 });
+], { x: 7.4, y: 5.2, w: 5.43, h: 1.8, size: 12, gap: 9 });
 s.addNotes("Mensaje: la restricción es la capacidad, así que el problema es decidir a quién contactar, no predecir. KPI incremental neto de riesgo; el proxy mensual (incrementales por 1.000 contactos) sirve mientras madura la mora. 12 % sin denominador no es una meta: 960 si es sobre 8.000, 3.000 si es sobre 25.000 (37,5 % por contacto). Guardrail de riesgo: la mora esperada de la lista (score y política de Riesgos) se verifica antes de ejecutar; el vintage de mora 30+ a 60 días por cohorte confirma (alarma y pausa). La pregunta única define si el histórico permite medir causalidad o solo describe la política vigente.");
 
 // ============================================================ SLIDE 2
@@ -125,7 +125,7 @@ bullets(s, [
   [{ text: "Partición: ", bold: true }, { text: "rolling-origin con un corte de gap (entrenar ≤ t−2, probar en t, mayo a agosto); deduplicar por cliente." }],
   [{ text: "Desbalance: ", bold: true }, { text: "sin remuestreo; evaluar en el punto de operación (top 32 %, calibración), no con accuracy." }],
 ], { x: 0.5, y: 5.0, w: 12.33, h: 1.9, size: 12, gap: 5 });
-s.addNotes("Detalle de cada hallazgo en la guía P5 y P6. Fuga: 78 % de «Acepta» renueva; dias_hasta_renovacion es nulo exactamente en los 1.436 no renovados. Calidad: max_mora_6m = −4, ahorro −350.000, contacto fechado 2026-09-15 con corte agosto; score de buró 352–912 está dentro de la escala DataCrédito 150–950 (confirmar central, versión y vigencia). contactabilidad_score no predice el contacto (32 % de no contactados en todos los cuartiles). cuotas_pagadas_pct y monto_preaprobado quedan fuera del set limpio hasta certificar su timestamp: no cuesta señal (AUC 0,52–0,53). Accuracy trivial: 79,8 % en la base, 96,4 % en producción sin acertar un renovador.");
+s.addNotes("Detalle de cada hallazgo en la guía P5 y P6. Fuga: 78 % de «Acepta» renueva; dias_hasta_renovacion es nulo exactamente en los 1.436 no renovados. Calidad: max_mora_6m = −4, ahorro −350.000, contacto fechado 2026-09-15 con corte agosto; score de buró 352–912 está dentro de la escala DataCrédito 150–950 (confirmar central, versión y vigencia). contactabilidad_score no predice el contacto (32 % de no contactados en todos los cuartiles). cuotas_pagadas_pct, monto_preaprobado y dias_ultimo_contacto quedan fuera del set limpio hasta certificar su timestamp (51 contactos fechados dentro del mes de corte y 1 después): no cuesta señal (AUC univariado 0,50–0,53); en producción se recalcula a la fecha de corte. Accuracy trivial: 79,8 % en la base, 96,4 % en producción sin acertar un renovador.");
 
 // ============================================================ SLIDE 3
 pres.addSection({ title: "Alternativas" });
@@ -142,7 +142,7 @@ tbl(s, [
 
 heading(s, "Réplica: el AUC de C se explica por la fuga", 8.5, 1.4, 4.33, 13);
 s.addText("AUC fuera de tiempo: entrenar ≤ t−2, probar en t, mayo a agosto.", { ...TB, x: 8.5, y: 1.75, w: 4.33, h: 0.3, fontSize: 11, color: HEX.muted });
-s.addChart(pres.ChartType.bar, [{ name: "AUC", labels: ["16 variables ex ante", "+ resultado_gestion_30d", "+ dias_hasta_renovacion"], values: [0.82, 0.94, 1.0] }], {
+s.addChart(pres.ChartType.bar, [{ name: "AUC", labels: ["15 variables ex ante", "+ resultado_gestion_30d", "+ dias_hasta_renovacion"], values: [0.82, 0.94, 1.0] }], {
   x: 8.5, y: 2.05, w: 4.33, h: 2.35, barDir: "bar", chartColors: [HEX.viz1, HEX.viz3, HEX.neg], invertedColors: [HEX.viz1],
   showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 10, dataLabelColor: HEX.ink, dataLabelFontFace: "+mn-lt", dataLabelFormatCode: "0.00",
   valAxisMinVal: 0.5, valAxisMaxVal: 1.05, valAxisLabelFontSize: 9, valAxisLabelColor: HEX.muted, valAxisLabelFontFace: "+mn-lt", valGridLine: { color: HEX.line, size: 0.5 },
@@ -160,7 +160,7 @@ bullets(s, [
   "La regla de asignación de la campaña de D: fracción aleatorizada, unidad y cumplimiento.",
   "Un mismo holdout donde medir uplift@8k de cada modelo en COP netos de mora, con intervalos.",
 ], { x: 7.0, y: 5.65, w: 5.83, h: 1.3, size: 11, gap: 3 });
-s.addNotes("Repliqué con la base: el AUC de C (0,94) solo se obtiene incluyendo el resultado de gestión; con dias_hasta_renovacion llega a 1,00. A: 0,86 supera lo que esta base permite replicar (0,82), pero la hoja viene de otra población, así que no es concluyente; su mora 7,2 % es la peor y, de ser real, lo convierte en la alternativa de menor valor; ambas cosas exigen auditoría variable por variable. B: coherente con la réplica, calibrado (pendiente 0,90), estable; pasa a piloto tras la misma ficha de fuga. D: la hoja reporta «+3,1 pp incremental» en la columna de mora y Qini en la de PR-AUC; no es comparable con A, B y C sin aclarar unidades. Las conversiones «top 8k» de la hoja y la conversión top 32 % de la réplica (≈ 45 %) no son comparables: otra población y otra regla de contacto.");
+s.addNotes("Repliqué con la base: el AUC de C (0,94) solo se obtiene incluyendo el resultado de gestión; con dias_hasta_renovacion llega a 1,00. A: 0,86 supera lo que esta base permite replicar (0,82), pero la hoja viene de otra población, así que no es concluyente; su mora 7,2 % es la peor y, de ser real, lo convierte en la alternativa de menor valor; ambas cosas exigen auditoría variable por variable. B: coherente con la réplica, calibrado (pendiente 0,91), estable; pasa a piloto tras la misma ficha de fuga. D: la hoja reporta «+3,1 pp incremental» en la columna de mora y Qini en la de PR-AUC; no es comparable con A, B y C sin aclarar unidades. Las conversiones «top 8k» de la hoja y la conversión top 32 % de la réplica (≈ 45 %) no son comparables: otra población y otra regla de contacto.");
 
 // ============================================================ SLIDE 4
 pres.addSection({ title: "Valor" });
@@ -178,7 +178,7 @@ card(s, { x: 7.95, y: 1.4, w: 2.35, h: 1.55, fill: HEX.mint, overline: "B VS. AC
 card(s, { x: 10.48, y: 1.4, w: 2.35, h: 1.55, overline: "POR RENOVACIÓN", value: "337 k vs 290 k", valueSize: 20, foot: "B vs. A: la mora pesa más que 0,6 pp." });
 heading(s, "Lo que el cálculo no prueba", 7.95, 3.1, 4.9, 13);
 bullets(s, [
-  "No incremental: si la mitad de las 704 renovaciones de B fuera orgánica, baja a 119 M.",
+  "No incremental: con orgánico ≈ 5 % (57 % de las 704 renovaciones de B), el valor incremental baja a ≈ 103 M.",
   "B vs. A: conversión no distinguible (z ≈ 1,3), mora apenas (z ≈ 2,1); B gana por robustez.",
   "A supera a B solo con mora < 5,8 %. Faltan costo de contacto, LGD y origen del «top 8k».",
 ], { x: 7.95, y: 3.45, w: 4.88, h: 1.3, size: 11, gap: 2 });
@@ -188,26 +188,26 @@ tbl(s, [
   [thead("Regional"), thead("Capacidad"), thead("Si ranking global"), thead("Exceso / ocio"), thead("Mora hist."), thead("Regla operativa")],
   [tcell("Suroccidente"), tcell("2.600"), tcell("≈ 2.400"), tcell("≈ −200 ociosos", { color: HEX.warn }), tcell("5,4 %"), tcell("Llena su cuota con su ranking; cede sobrantes")],
   [tcell("Centro"), tcell("1.900"), tcell("≈ 2.100"), tcell("≈ +200 sin gestor", { color: HEX.neg }), tcell("4,7 %"), tcell("Corte por cuota; lista semanal contra saturación de cierre")],
-  [tcell("Norte"), tcell("1.200"), tcell("≈ 1.300"), tcell("≈ +100 sin gestor", { color: HEX.neg }), tcell("6,8 %"), tcell("Mayor valor marginal (86 k): recibe cupos transferidos")],
-  [tcell("Eje Cafetero"), tcell("1.000"), tcell("≈ 1.100"), tcell("≈ +100 sin gestor", { color: HEX.neg }), tcell("4,9 %"), tcell("Corte por cuota; segundo valor marginal (81 k)")],
-  [tcell("Oriente"), tcell("1.300"), tcell("≈ 1.100"), tcell("≈ −200 ociosos", { color: HEX.warn }), tcell("5,5 %"), tcell("Menor valor marginal (61 k): cede cupos, tope a pactar (10 %)")],
+  [tcell("Norte"), tcell("1.200"), tcell("≈ 1.300"), tcell("≈ +100 sin gestor", { color: HEX.neg }), tcell("6,8 %"), tcell("Mayor valor marginal (85 k): recibe cupos transferidos")],
+  [tcell("Eje Cafetero"), tcell("1.000"), tcell("≈ 1.100"), tcell("≈ +100 sin gestor", { color: HEX.neg }), tcell("4,9 %"), tcell("Corte por cuota; segundo valor marginal (82 k)")],
+  [tcell("Oriente"), tcell("1.300"), tcell("≈ 1.100"), tcell("≈ −200 ociosos", { color: HEX.warn }), tcell("5,5 %"), tcell("Menor valor marginal (65 k): cede cupos, tope a pactar (10 %)")],
 ], { x: 0.5, y: 5.05, w: 12.33, colW: [1.5, 1.1, 1.5, 1.7, 1.0, 5.53], rowH: 0.28, fontSize: 10 });
 s.addText("Logística limpia, junio–agosto (n = 696); proyección a centenas con la mezcla regional de la muestra.", { ...TB, x: 0.5, y: 6.75, w: 12.33, h: 0.28, fontSize: 11, color: HEX.muted, italic: true });
-s.addNotes("B gana por riesgo, no por conversión: cada renovación de B vale 337.200 frente a 290.400 de A. Incertidumbre (supuesto 8.000 contactos por alternativa, 752 y 704 renovados): conversión z = 1,32 (p 0,19), mora z = 2,11 (p 0,03); en valor B es al menos equivalente dentro de la incertidumbre. El valor no es incremental: por eso el piloto. Capacidad: un ranking global sobrecarga Centro, Norte y Eje y deja ≈ 400 cupos ociosos en Suroccidente y Oriente; cuotas por regional con transferencia por valor marginal (tope a pactar con Comercial). La conversión en muestra con y sin cuotas es equivalente (43,2 % vs. 42,6 %, dentro del ruido). Sensibilidad a la pérdida por mora de 1,0 / 1,8 / 2,5 / 3,5 M: B 263 / 237 / 215 / 182 vs. A 262 / 218 / 181 / 126.");
+s.addNotes("B gana por riesgo, no por conversión: cada renovación de B vale 337.200 frente a 290.400 de A. Incertidumbre (supuesto 8.000 contactos por alternativa, 752 y 704 renovados): conversión z = 1,32 (p 0,19), mora z = 2,11 (p 0,03); en valor B es al menos equivalente dentro de la incertidumbre. El valor no es incremental: el orgánico del tercil alto de buró (de donde sale el top de B) es ≈ 5 % (7 de 129 no contactados renovaron solos; IC 2,7–10,8 %), así que ≈ 57 % de las renovaciones de B serían orgánicas y el valor incremental ≈ 103 M (129 M con orgánico 4 %, 76 M con 6 %). Por eso el piloto. Capacidad: un ranking global sobrecarga Centro, Norte y Eje y deja ≈ 400 cupos ociosos en Suroccidente y Oriente; cuotas por regional con transferencia por valor marginal (tope a pactar con Comercial). La conversión en muestra con y sin cuotas es equivalente (41,9 % vs. 43,5 %, cuatro renovaciones de diferencia, dentro del ruido). Sensibilidad a la pérdida por mora de 1,0 / 1,8 / 2,5 / 3,5 M: B 263 / 237 / 215 / 182 vs. A 262 / 218 / 181 / 126.");
 
 // ============================================================ SLIDE 5
 pres.addSection({ title: "Piloto" });
 s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Piloto" });
 s.addText("5 · Un piloto de dos meses mide si la lista nueva convierte más y si el contacto crea renovaciones; el riesgo se controla por política", { placeholder: "title" });
-heading(s, "Diseño: dos pools al azar, mismo piso de riesgo", 0.5, 1.4, 7.5, 13);
-arm(s, 0.5, 1.8, 2.4, 1.5, HEX.surface, "CHAMPION", "Herramienta actual elige sus 4.000 en su pool", "4.000 contactos/mes");
-arm(s, 3.05, 1.8, 2.4, 1.5, HEX.mint, "CHALLENGER", "B rankea su pool con cuotas; toma su top 4.800", "4.000 contactados/mes");
-arm(s, 5.6, 1.8, 2.4, 1.5, HEX.lavender, "HOLDOUT", "800 al azar del top 4.800 de B, sin contacto", "≈ 800 clientes/mes");
+heading(s, "Diseño: dos pools al azar, mismo piso", 0.5, 1.4, 7.5, 13);
+arm(s, 0.5, 1.8, 2.4, 1.5, HEX.surface, "CHAMPION", "Herramienta actual elige 4.000 en su pool", "4.000 contactos/mes");
+arm(s, 3.05, 1.8, 2.4, 1.5, HEX.mint, "CHALLENGER", "B rankea su pool con cuotas; top 4.800", "4.000 contactados/mes");
+arm(s, 5.6, 1.8, 2.4, 1.5, HEX.lavender, "HOLDOUT", "800 al azar del top de B, sin contacto", "≈ 800 clientes/mes");
 bullets(s, [
-  [{ text: "Calidad de lista: ", bold: true }, { text: "3,6 → 5,4 % se detecta con 2.081 por brazo (un mes); 3,6 → 4,5 %, dos meses." }],
-  [{ text: "Efecto del contacto: ", bold: true }, { text: "uplift plausible 2,3 → 4,0 % (mitad del +3,1 pp de D) en 1,3 meses; cuesta 4,6 M/mes." }],
-  [{ text: "Riesgo: ", bold: true }, { text: "el mismo piso en ambos brazos aísla el modelo; mora vigilada por vintage." }],
-  [{ text: "Límite: ", bold: true }, { text: "sin holdout en el champion no se compara su incrementalidad; opción, 400 allí (≈ 2,3 M/mes)." }],
+  [{ text: "Calidad: ", bold: true }, { text: "3,6 → 5,4 % se detecta con 2.081 por brazo en un mes." }],
+  [{ text: "Efecto del contacto: ", bold: true }, { text: "baseline 5 % (tercil alto); +3,8 pp en 0,6 meses, +1,7 pp en 2,3." }],
+  [{ text: "Riesgo: ", bold: true }, { text: "mismo piso en ambos brazos; vigilado por vintage." }],
+  [{ text: "Límite: ", bold: true }, { text: "el champion sin holdout no mide su incrementalidad; opción, 400 allí (≈ 2,3 M/mes)." }],
 ], { x: 0.5, y: 3.45, w: 7.5, h: 1.6, size: 11, gap: 2 });
 
 heading(s, "Reglas de salida (pre-registradas)", 8.3, 1.4, 4.53, 13);
@@ -220,7 +220,7 @@ tbl(s, [
   [tcell("Ejecución y aleatorización"), tcell("≥ 90 % por regional; sin sesgo de asignación")],
 ], { x: 8.3, y: 1.8, w: 4.53, colW: [2.25, 2.28], rowH: 0.3, fontSize: 10 });
 
-heading(s, "Monitoreo, primeros tres meses", 0.5, 5.05, 7.5, 13);
+heading(s, "Monitoreo (tres meses)", 0.5, 5.05, 7.5, 13);
 tbl(s, [
   [thead("Dimensión"), thead("Métrica"), thead("Acción")],
   [tcell("Datos"), tcell("Esquema, rangos y fechas posteriores al corte; cada corte"), tcell("Bloqueo: no se puntúa")],
@@ -234,8 +234,10 @@ heading(s, "No libero si", 8.3, 5.05, 4.53, 13);
 bullets(s, [
   "Variable no point-in-time o split no temporal.",
   "Sin calibración verificada, holdout, rollback o dueño.",
-], { x: 8.3, y: 5.4, w: 4.53, h: 1.4, size: 11, gap: 2 });
-s.addNotes("Mecánica: el universo elegible del mes (filtrado por el mismo piso de riesgo: corte de buró y max_mora pactados con Riesgos) se parte al azar en dos pools por cliente, estratificando por regional y tercil de score. El champion elige sus 4.000 en su pool; el challenger rankea el suyo, toma su top 4.800, retiene 800 al azar como holdout sin contacto y contacta 4.000. Capacidad intacta: 8.000. Dos reglas separadas: calidad de lista (challenger vs. champion) y efecto del contacto (challenger contactado vs. holdout). Potencia del holdout (800 vs. 4.000): uplift +1,2 pp exige 2,4 meses; +1,7 pp, 1,3 meses; +2,2 pp, 0,9. Costo de oportunidad 3,2 / 4,6 / 5,9 / 7,3 M/mes, ≤ 2 % del VE de B. Limitación: sin holdout en el champion no comparamos la incrementalidad de las dos políticas; la opción de 400 de holdout en el champion cuesta ≈ 2,3 M/mes y deja ese brazo en 3.600. Probar mora 5,1 % vs. 7,2 % exigiría 2.053 renovados por brazo: el riesgo entra por política y se vigila por vintage. Duración: dos meses de asignación + 30 días de ventana + 30 a 60 de maduración; decisión a los 90 días. Jerga (SRM, CSI, Brier, CUPED) en el anexo y la guía. Condiciones completas de no liberación en la guía P16.");
+  "Capacidad que no ejecuta ≥ 90 % de la lista: el modelo no se prueba.",
+  "Selección que excluye un grupo o regional sin explicación de negocio.",
+], { x: 8.3, y: 5.4, w: 4.53, h: 1.55, size: 11, gap: 2 });
+s.addNotes("Mecánica: el universo elegible del mes (filtrado por el mismo piso de riesgo: corte de buró y max_mora pactados con Riesgos) se parte al azar en dos pools por cliente, estratificando por regional y tercil de score. El champion elige sus 4.000 en su pool; el challenger rankea el suyo, toma su top 4.800, retiene 800 al azar como holdout sin contacto y contacta 4.000. Capacidad intacta: 8.000. Dos reglas separadas: calidad de lista (challenger vs. champion) y efecto del contacto (challenger contactado vs. holdout). Baseline del holdout: no el 2,3 % global, sino el orgánico del tercil alto de buró (≈ 5 %, 7 de 129, IC 2,7–10,8 %), porque el holdout sale del top de B. Potencia (800 vs. 4.000, baseline 5 %): conservador +1,7 pp exige 1.856 en holdout, 2,3 meses, 4,6 M/mes de costo; plausible +3,8 pp (el uplift implícito si B convierte 8,8 % sobre un orgánico de 5 %) exige 444, 0,6 meses, 10,3 M/mes. Dos meses detectan el escenario plausible con margen; el conservador necesita un tercer mes. El costo es ≤ 4 % del VE de B. Limitación: sin holdout en el champion no comparamos la incrementalidad de las dos políticas; la opción de 400 de holdout en el champion cuesta ≈ 2,3 M/mes y deja ese brazo en 3.600. Probar mora 5,1 % vs. 7,2 % exigiría 2.053 renovados por brazo: el riesgo entra por política y se vigila por vintage. Duración: dos meses de asignación + 30 días de ventana + 30 a 60 de maduración; decisión a los 90 días. Jerga (SRM, CSI, Brier, CUPED) en el anexo y la guía. Condiciones completas de no liberación en la guía P16.");
 
 // ============================================================ SLIDE 6
 pres.addSection({ title: "Recomendación" });
@@ -274,7 +276,7 @@ bullets(s, [
   [{ text: "Auditable: ", bold: true }, { text: "model card, datasheet, ficha de fuga, monitoreo, RACI." }],
   [{ text: "SHAP no es causa: ", bold: true }, { text: "al buró alto se le busca más (37 % vs. 22 %); solo el holdout lo prueba." }],
 ], { x: 8.1, y: 3.85, w: 4.73, h: 3.0, size: 11, gap: 4 });
-s.addNotes("Pedimos tres decisiones. Ruta de 90 días con la ficha de fuga variable por variable para A y B en las semanas 3 a 4 (fuente, timestamp, disponibilidad al puntuar). Gobierno: sin cuotas, el modelo limpio selecciona 28 % en Oriente frente a 35 % en Centro (AIR ≈ 0,80, en el límite); con cuotas, la selección por regional la fija la capacidad, así que la equidad se vigila en conversión y calibración por grupo dentro de cada regional. El 79 % de la lista cae en el tercil alto de buró: ese piso lo fija la política de riesgo, no el algoritmo. SHAP es correlación: en la base, 37 % del tercil bajo de buró quedó sin contactar frente a 22 % del alto.");
+s.addNotes("Pedimos tres decisiones. Ruta de 90 días con la ficha de fuga variable por variable para A y B en las semanas 3 a 4 (fuente, timestamp, disponibilidad al puntuar). Gobierno: sin cuotas, el modelo limpio selecciona 28 % en Oriente frente a 35 % en Centro (AIR ≈ 0,80 puntual, pero con 100 a 200 clientes por regional el intervalo bootstrap es 0,49–0,88: el 0,80 no informa y el 0,67 de la partición sin gap cae dentro; la regla está pensada para el universo mensual de 25.000, donde el intervalo se estrecha unas seis veces); con cuotas, la selección por regional la fija la capacidad, así que la equidad se vigila en conversión y calibración por grupo dentro de cada regional. El 79 % de la lista cae en el tercil alto de buró: ese piso lo fija la política de riesgo, no el algoritmo. SHAP es correlación: en la base, 37 % del tercil bajo de buró quedó sin contactar frente a 22 % del alto.");
 
 // ============================================================ ANEXO
 pres.addSection({ title: "Anexo" });
@@ -283,13 +285,13 @@ s.addText("Anexo · Soporte técnico: réplica, economía, tamaños de muestra y
 heading(s, "Réplica fuera de tiempo (train ≤ t−2, un corte de gap, test = t, t = mayo a agosto)", 0.5, 1.3, 7.3, 12);
 tbl(s, [
   [thead("Conjunto de variables"), thead("Modelo"), thead("AUC"), thead("Rango"), thead("PR-AUC"), thead("Calibración (pend.)"), thead("Brier")],
-  [tcell("16 ex ante limpias"), tcell("Logística"), tcell("0,817"), tcell("0,78–0,85"), tcell("0,52"), tcell("0,90"), tcell("0,130")],
-  [tcell("16 ex ante limpias"), tcell("LightGBM"), tcell("0,786"), tcell("0,76–0,81"), tcell("0,49"), tcell("0,77"), tcell("0,138")],
-  [tcell("+ remesas, contactabilidad, regional"), tcell("Logística"), tcell("0,819"), tcell("0,78–0,85"), tcell("0,53"), tcell("0,90"), tcell("0,129")],
-  [tcell("+ resultado_gestion_30d"), tcell("Logística"), tcell("0,944"), tcell("0,93–0,96"), tcell("0,85"), tcell("0,99"), tcell("0,067")],
+  [tcell("15 ex ante limpias"), tcell("Logística"), tcell("0,820"), tcell("0,78–0,85"), tcell("0,53"), tcell("0,91"), tcell("0,129")],
+  [tcell("15 ex ante limpias"), tcell("LightGBM"), tcell("0,791"), tcell("0,77–0,82"), tcell("0,49"), tcell("0,78"), tcell("0,137")],
+  [tcell("+ remesas, contactabilidad, regional"), tcell("Logística"), tcell("0,821"), tcell("0,79–0,85"), tcell("0,53"), tcell("0,91"), tcell("0,128")],
+  [tcell("+ resultado_gestion_30d"), tcell("Logística"), tcell("0,944"), tcell("0,93–0,97"), tcell("0,85"), tcell("0,99"), tcell("0,067")],
   [tcell("+ dias_hasta_renovacion"), tcell("LightGBM"), tcell("1,000"), tcell("1,00–1,00"), tcell("1,00"), tcell("1,00"), tcell("0,000")],
 ], { x: 0.5, y: 1.65, w: 7.3, colW: [2.4, 0.9, 0.7, 0.95, 0.75, 1.1, 0.5], rowH: 0.27, fontSize: 9.5 });
-s.addText("Prevalencia de la base 20,2 %. Calibración: pendiente de observado sobre predicho (1 = perfecta); media predicha 0,197 vs. observada 0,207. Las conversiones «top 8k» de la hoja no son comparables con esta base. Sin gap (train < t, abril a agosto): 0,82 / 0,80; k-fold aleatorio: 0,82. Coeficientes estandarizados del modelo limpio: score_buro 1,30; max_mora_6m −0,56; respondio_oferta_previa 0,27; el resto < 0,15.", { ...TB, x: 0.5, y: 3.4, w: 7.3, h: 0.75, fontSize: 9, color: HEX.muted });
+s.addText("Prevalencia de la base 20,2 %. Calibración: pendiente de observado sobre predicho (1 = perfecta); media predicha 0,197 vs. observada 0,207. Las conversiones «top 8k» de la hoja no son comparables con esta base. Sin gap (train < t, abril a agosto): 0,82 / 0,80; k-fold aleatorio: 0,82. Coeficientes estandarizados del modelo limpio: score_buro 1,29; max_mora_6m −0,56; respondio_oferta_previa 0,27; el resto < 0,15. Orgánico por tercil de buró (no contactados): alto 5,4 % (7/129, IC 2,7–10,8 %), contactados del tercil alto 53 %: parte del valor de B es orgánica y el holdout lo mide.", { ...TB, x: 0.5, y: 3.33, w: 7.3, h: 0.85, fontSize: 8.5, color: HEX.muted });
 
 heading(s, "Valor esperado mensual (COP millones, 8.000 contactos)", 8.1, 1.3, 4.7, 12);
 tbl(s, [
@@ -305,23 +307,23 @@ s.addText("* Mora no reportada para D; se asume la de la herramienta actual. Val
 heading(s, "Tamaños de muestra (α 5 %, potencia 80 %) y costo del holdout", 0.5, 4.2, 6, 12);
 tbl(s, [
   [thead("Hipótesis"), thead("n"), thead("Meses · costo")],
-  [tcell("Conv. 3,6 % a 4,5 / 5,4 / 7,2 %"), tcell("7.530 / 2.081 / 618 por brazo"), tcell("2 / 1 / 1 meses")],
+  [tcell("Conv. 3,6 % a 4,5 / 5,4 / 7,2 %"), tcell("7.530 / 2.081 / 618 / brazo"), tcell("2 / 1 / 1 meses")],
   [tcell("Mora 5,1 % a 7,2 % (renovados)"), tcell("2.053 renovados por brazo"), tcell("fuera del piloto")],
-  [tcell("Holdout 2,3 a 3,5 % (800 vs. 4.000)"), tcell("1.932 en holdout"), tcell("2,4 meses · 3,2 M/mes")],
-  [tcell("Holdout 2,3 a 4,0 % (plausible)"), tcell("1.056 en holdout"), tcell("1,3 meses · 4,6 M/mes")],
-  [tcell("Holdout 2,3 a 4,5 / 5,0 %"), tcell("685 / 491 en holdout"), tcell("0,9 / 0,6 m · 5,9 / 7,3 M")],
+  [tcell("Holdout 5 %, +1,7 pp (conservador)"), tcell("1.856 en holdout"), tcell("2,3 meses · 4,6 M/mes")],
+  [tcell("Holdout 5 %, +3,8 pp (plausible, B)"), tcell("444 en holdout"), tcell("0,6 meses · 10,3 M/mes")],
+  [tcell("Holdout 4 / 6 %, +2,5 pp"), tcell("790 / 1.053 en holdout"), tcell("1,0 / 1,3 m · 6,7 M/mes")],
   [tcell("A − B reportada (8.000 c/u)"), tcell("conv. z 1,32 (p 0,19)"), tcell("mora z 2,11 (p 0,03)")],
-], { x: 0.5, y: 4.55, w: 5.7, colW: [2.3, 1.85, 1.55], rowH: 0.24, fontSize: 8.5 });
+], { x: 0.5, y: 4.55, w: 5.7, colW: [2.45, 1.7, 1.55], rowH: 0.24, fontSize: 8.5 });
 
 heading(s, "Variables excluidas del ranking, por motivo", 6.5, 4.2, 6.3, 12);
 tbl(s, [
   [thead("Motivo"), thead("Variables"), thead("Tratamiento")],
   [tcell("Fuga / resultado"), tcell("resultado_gestion_30d, dias_hasta_renovacion, mora30_post_renovacion, renovo_30d"), tcell("Solo como target o evaluación")],
-  [tcell("Disponibilidad temporal"), tcell("fecha_ultimo_contacto (1 > corte); cuotas_pagadas_pct, monto_preaprobado sin timestamp"), tcell("Fuera del set; sin costo (AUC 0,52–0,53); vuelven con timestamp")],
+  [tcell("Disponibilidad temporal"), tcell("fecha_ultimo_contacto / dias_ultimo_contacto (51 en el mes, 1 > corte); cuotas_pagadas_pct, monto_preaprobado"), tcell("Fuera del set; sin costo (AUC 0,50–0,53); vuelven con timestamp")],
   [tcell("Calidad"), tcell("max_mora_6m < 0, saldo_ahorros < 0, endeudamiento > 1, duplicado; buró dentro de 150–950"), tcell("Validar y corregir con registro; confirmar central y vigencia")],
   [tcell("Uso responsable y sesgo"), tcell("recibe_remesas, contactabilidad_score, regional (solo capacidad), cliente_id"), tcell("Fuera del score; grupos de equidad")],
 ], { x: 6.5, y: 4.55, w: 6.33, colW: [1.25, 3.4, 1.68], rowH: 0.36, fontSize: 8.5 });
-s.addText("Código y cálculos: work/01_diagnostico.py, 02_modelos_fuga.py y 03_economia_capacidad_piloto.py sobre una copia del anexo; el original no se modificó (hash verificado). Jerga: SRM = sample ratio mismatch; CSI = índice de estabilidad por variable; CUPED = ajuste por covariable pre-periodo.", { ...TB, x: 0.5, y: 6.35, w: 5.7, h: 0.6, fontSize: 8, color: HEX.muted, italic: true, valign: "top" });
+s.addText("Código y cálculos: work/01_diagnostico.py, 02_modelos_fuga.py y 03_economia_capacidad_piloto.py sobre una copia del anexo; el original no se modificó (hash verificado). Jerga: SRM = sample ratio mismatch; CSI = índice de estabilidad por variable; CUPED = ajuste por covariable pre-periodo.", { ...TB, x: 0.5, y: 6.42, w: 5.7, h: 0.55, fontSize: 8, color: HEX.muted, italic: true, valign: "top" });
 s.addNotes("Anexo de soporte para preguntas técnicas. Detalle completo en la guía de sustentación (19 preguntas).");
 
 (async () => {

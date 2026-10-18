@@ -38,10 +38,12 @@ Requisitos: Python 3.13 con las versiones fijadas en `requirements.txt`; Node 22
 
 | Supuesto | Valor usado | Fuente |
 |---|---|---|
-| Escala del score de buró | DataCrédito 150–950 (observado 352–912, dentro del rango). Pendiente confirmar central, versión y vigencia | Experian DataCrédito Colombia, documentación pública del score Acierta |
+| Escala del score de buró | DataCrédito 150–950 (observado 352–912, dentro del rango). Pendiente confirmar central, versión y vigencia | DataCrédito Experian, Datablog: «DataCrédito utiliza un Puntaje de Crédito estándar, el cual arranca desde los 150 puntos y llega hasta los 950 puntos» (publicado 2024-05-16; consultado 2026-10-18): https://www.datacredito.com.co/blogs/datablog/que-es-vida-crediticia-y-puntaje-de-credito-mitos-y-verdades/ . Nota: MiDecisor (producto empresarial) publica 0–950 y algunos medios 150–999; se usa la escala estándar de la central |
 | Economía por renovación | Contribución COP 420.000; pérdida por mora 30+ COP 1.800.000; horizonte 30 días | Enunciado de la prueba (PDF) |
 | Universo y capacidad | 25.000 clientes/mes; 8.000 contactos; capacidad por regional de `Capacidad_Regional` | Anexo Excel |
-| Conversión orgánica del holdout | 2,3 % (tasa de renovación entre «No contactado» en la base) | `work/output/01_diagnostico.txt` |
+| Baseline orgánico del holdout | 5 % (5,4 % entre no contactados del tercil alto de buró, 7 de 129, IC 2,7–10,8 %; sensibilizado a 4 % y 6 %). El 2,3 % global no aplica porque el holdout sale del top de B | `work/output/organico_por_buro.csv` |
+| Fracción orgánica implícita de B | ≈ 57 % (5 % / 8,8 %); uplift implícito +3,8 pp; VE incremental ≈ 103 M/mes | `work/output/organico_implicito.csv` |
+| Intervalo del AIR regional | Bootstrap de 2.000 remuestreos sobre la muestra de test (n = 696) | `work/output/air_regional.csv` |
 | Tamaño de las cifras de la hoja de modelos | 8.000 contactos por alternativa; 752 y 704 renovados en A y B | Supuesto para calcular errores estándar (`incertidumbre_AB.csv`) |
 
 ## Conclusión en una frase
