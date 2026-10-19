@@ -6,14 +6,17 @@ Solución al reto de la prueba técnica de Científico de Datos de Banco W (prio
 
 | Archivo | Qué es |
 |---|---|
-| `entregables/BancoW_Priorizacion_Renovaciones_DavinsonArteaga.pptx` | Presentación ejecutiva: 6 slides + 1 anexo (entregable principal). Notas del orador en cada slide. |
+| `entregables/BancoW_Priorizacion_Renovaciones_DavinsonArteaga.pptx` | Presentación ejecutiva: portada, 6 slides de contenido, cierre y anexo (entregable principal). Notas del orador en cada slide; fuentes incrustadas. |
+| `entregables/BancoW_Priorizacion_Renovaciones_DavinsonArteaga.pdf` | La misma presentación exportada a PDF desde PowerPoint. |
 | `entregables/Guia_sustentacion_19_preguntas.md` | Respuestas completas a las 19 preguntas del enunciado, con la evidencia calculada, para la sustentación y el Q&A. |
 | `work/01_diagnostico.py` | Perfil de la base: rangos, duplicados, temporalidad, tablas cruzadas de fuga, AUC univariado, descriptivos de equidad. |
 | `work/02_modelos_fuga.py` | Réplica de las métricas de la hoja `Resultados_Modelos` con validación temporal rolling-origin, con y sin variables de fuga; scores del modelo limpio. |
 | `work/03_economia_capacidad_piloto.py` | Valor esperado por alternativa, sensibilidad, asignación con capacidad regional y tamaños de muestra del piloto. |
 | `work/output/` | Salidas de los tres scripts (txt y csv). |
-| `work/deck/build_deck.js` | Generador del PPT (pptxgenjs). Paleta naranja + teal de Banco W, Segoe UI para texto y Bahnschrift para títulos y cifras (ambas vienen con Windows 10 y 11). El isotipo del pie se lee de `docs_privados/assets/` (no versionado); sin ese archivo el deck se genera sin logo. |
-| `work/deck/qa_deck.py` | QA del deck con python-pptx: ≤ 170 palabras fuera de tablas, celdas ≤ 20 palabras, cuerpo ≥ 11 pt, tablas ≥ 10 pt y ≤ 5 filas (monitoreo ≤ 6), sin jerga en el texto visible, solo Segoe UI y Bahnschrift, notas en todas las slides. |
+| `work/deck/build_deck.js` | Generador del PPT (pptxgenjs). Paleta naranja + teal de Banco W, Segoe UI para texto y Segoe UI Semibold para títulos y cifras (vienen con Windows 10 y 11). |
+| `work/deck/qa_deck.py` | QA del deck con python-pptx: ≤ 170 palabras fuera de tablas, celdas ≤ 20 palabras, cuerpo ≥ 11 pt, tablas ≥ 10 pt y ≤ 5 filas (monitoreo ≤ 6), sin jerga en el texto visible, solo Segoe UI y Segoe UI Semibold, 9 slides con notas. |
+| `work/deck/qa_layout.ps1` | QA de maquetación con PowerPoint: holgura ≥ 15 % en cada caja de texto y ningún solape entre textos, tablas y gráficos. |
+| `work/deck/qa_pdf.py` | QA de solapes sobre PDF exportados (PowerPoint o LibreOffice): palabras superpuestas o fuera de página. |
 | `requirements.txt` | Versiones fijadas de Python. |
 
 ## Datos de entrada (no versionados)
@@ -31,7 +34,7 @@ Las tres rutas están en `.gitignore`. Las salidas en `work/output/` sí se vers
 ## Reglas respetadas
 
 - El Excel original no se modificó. Todo cálculo corre sobre la copia. SHA-256 del original verificado antes y después de cada ronda: `c5b55ba57f6b2bcc2ecb74cf95dd75469d13e891e29284fbc5e4283d15a1f8fa`.
-- La presentación tiene exactamente 6 slides de contenido + 1 anexo.
+- La presentación tiene 6 slides de contenido que responden las 6 preguntas del enunciado, más portada, cierre y 1 anexo.
 
 ## Reproducir
 
@@ -43,6 +46,8 @@ python work/02_modelos_fuga.py > work/output/02_modelos_fuga.txt
 python work/03_economia_capacidad_piloto.py > work/output/03_economia.txt
 cd work/deck && npm install && NODE_PATH="$PWD/node_modules" node build_deck.js
 cd ../.. && python work/deck/qa_deck.py   # palabras, jerga, fuentes, filas, notas (exit 1 si falla)
+powershell -File work/deck/qa_layout.ps1   # holgura y solapes medidos por PowerPoint (Windows)
+python work/deck/qa_pdf.py deck_powerpoint.pdf deck_libreoffice.pdf   # solapes en los PDF exportados
 ```
 
 Opcional, en Windows con PowerPoint: incrustar las fuentes para que el deck se vea igual en cualquier equipo (el entregable versionado ya las trae).

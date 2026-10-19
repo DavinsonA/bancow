@@ -4,16 +4,16 @@ from pptx import Presentation
 sys.stdout.reconfigure(encoding="utf-8")
 PATH = sys.argv[1] if len(sys.argv) > 1 else "entregables/BancoW_Priorizacion_Renovaciones_DavinsonArteaga.pptx"
 MAX_WORDS, MIN_BODY, MIN_TABLE, MAX_ROWS, MAX_CELL = 170, 11, 10, 5, 20
-ROWS_EXC = {5: 6}            # slide 5: monitoreo ≤ 6 filas
-N_MAIN, N_TOTAL = 6, 7
-FONTS_OK = {"Segoe UI", "Bahnschrift"}  # texto y display; cualquier otra fuente explícita es un error
+ROWS_EXC = {6: 6}            # slide del piloto: monitoreo ≤ 6 filas
+MAIN, N_TOTAL = set(range(2, 8)), 9   # portada (1), seis slides principales (2-7), cierre (8), anexo (9)
+FONTS_OK = {"Segoe UI", "Segoe UI Semibold"}  # texto y display; cualquier otra fuente explícita es un error
 # Jerga prohibida en el texto visible de las slides 1-6 (se conserva en notas y anexo). Excepciones: (slide, patrón) -> texto permitido en el mismo cuadro o celda.
 JARGON = [r"\bholdout\b", r"\bchampion\b", r"\bchallenger\b", r"\bvintage\b", r"point[- ]in[- ]time", r"ficha de fuga", r"\buplift\b", r"\borgánic\w*",
           r"\bship\b", r"\brollback\b", r"\bLGD\b", r"z\s*≈", r"IC\s*95", r"\bPSI\b", r"\bSRM\b", r"\bCUPED\b"]
-JARGON_EXC = {(5, r"\bchampion\b"): r"\(champion\)",                    # primera tarjeta del slide 5: «Lista actual (champion)»
-              (3, r"\buplift\b"): r"^Uplift$",                          # fila de D en la tabla: tipo de modelo
-              (4, r"\buplift\b"): r"^D Uplift$",                        # etiqueta de la barra de D en el gráfico (mismo uso)
-              (5, r"\bPSI\b"): r"población"}                            # explicado en la misma celda
+JARGON_EXC = {(6, r"\bchampion\b"): r"\(champion\)",                    # primera tarjeta del slide 5: «Lista actual (champion)»
+              (4, r"\buplift\b"): r"^Uplift$",                          # fila de D en la tabla: tipo de modelo
+              (5, r"\buplift\b"): r"^D Uplift$",                        # etiqueta de la barra de D en el gráfico (mismo uso)
+              (6, r"\bPSI\b"): r"población"}                            # explicado en la misma celda
 words = lambda t: len([w for w in re.split(r"\s+", t) if re.search(r"[0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ]", w)])
 def fonts(tf):
     for p in tf.paragraphs:
@@ -34,7 +34,7 @@ slides = list(prs.slides)
 if len(slides) != N_TOTAL: fails.append(f"deck con {len(slides)} slides, esperado {N_TOTAL}")
 print(f"{'slide':>5} {'palabras':>8} {'min_cuerpo':>10} {'min_tabla':>9} {'tablas(filas)':>14} notas")
 for i, sl in enumerate(slides, 1):
-    main = i <= N_MAIN; w = 0; fb = []; ft = []; tabs = []; texts = []
+    main = i in MAIN; w = 0; fb = []; ft = []; tabs = []; texts = []
     for sh in sl.shapes:
         if sh.has_table:
             t = sh.table; nrows = len(t.rows) - 1; tabs.append(nrows)
@@ -66,4 +66,4 @@ for i, sl in enumerate(slides, 1):
 for i, p, s in jargon_hits: fails.append(f"slide {i}: jerga «{p}» en «{s}»")
 if fails:
     print("\nFALLA:"); [print(" -", f) for f in fails]; sys.exit(1)
-print("\nQA OK: límites cumplidos en las 6 slides principales (incl. jerga); anexo sin restricción.")
+print("\nQA OK: límites cumplidos en las 6 slides principales (incl. jerga); portada, cierre y anexo sin restricción.")

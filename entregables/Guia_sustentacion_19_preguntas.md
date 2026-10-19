@@ -2,7 +2,7 @@
 
 Banco W · Prueba técnica Científico de Datos · Davinson Arteaga · Data Scientist · AI Engineer
 
-Este documento acompaña la presentación de 6 slides + anexo. Contiene las respuestas completas a cada pregunta del enunciado, con la evidencia calculada sobre una copia del anexo (`work/copia_Anexo_BancoW.xlsx`). El archivo original no se modificó (SHA-256 `c5b55ba5…f8fa`, verificado antes y después del trabajo).
+Este documento acompaña la presentación (portada, 6 slides de contenido, cierre y anexo). Contiene las respuestas completas a cada pregunta del enunciado, con la evidencia calculada sobre una copia del anexo (`work/copia_Anexo_BancoW.xlsx`). El archivo original no se modificó (SHA-256 `c5b55ba5…f8fa`, verificado antes y después del trabajo).
 
 Convención: **[E]** dato del enunciado o anexo · **[C]** cálculo propio reproducible en `work/` · **[S]** supuesto declarado.
 

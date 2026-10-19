@@ -1,7 +1,6 @@
 // Deck ejecutivo Banco W - 6 slides + 1 anexo. Sistema "documento interno": paleta naranja + teal de Banco W, retícula de 12 columnas.
 // Investigación y paleta: docs_privados/investigacion_buenas_practicas_ppt.md y docs_privados/propuesta_visual.md (no versionados).
 // Uso: NODE_PATH=$PWD/node_modules node build_deck.js   (DECK_FONT y DECK_OUT permiten comparar fuentes sin tocar el entregable)
-const fs = require("fs");
 const pptxgen = require("pptxgenjs");
 const { applyTheme } = require("C:/Users/Davinson/.claude/skills/synced/ce2ca63a-6da1-4b29-b559-5cf82e86a0ed_08922b1b-3ba5-474d-802d-4ad0bb25fd8d/pptx/scripts/apply_theme.js");
 
@@ -18,10 +17,8 @@ const C = {
   peach: "FFF1EA",    // Melocotón del informe
 };
 const FONT = process.env.DECK_FONT || "Segoe UI";            // texto, tablas y gráficos: humanista, legible en proyección
-const FONT_D = process.env.DECK_FONT_DISPLAY || "Bahnschrift"; // títulos y cifras: DIN geométrica, cercana a la Geomanist de la marca
+const FONT_D = process.env.DECK_FONT_DISPLAY || "Segoe UI Semibold"; // títulos y cifras: misma familia, peso semibold
 const OUT = process.env.DECK_OUT || "C:/Users/Davinson/Desktop/banco w/entregables/BancoW_Priorizacion_Renovaciones_DavinsonArteaga.pptx";
-// Isotipo de Banco W (región visible del SVG entregado). Material del proceso de selección: vive fuera del repo público.
-const LOGO = "C:/Users/Davinson/Desktop/banco w/docs_privados/assets/logo_bancow_isotipo.png";
 const THEME = { name: "Banco W documento", headFontFace: FONT_D, bodyFontFace: FONT,
   colors: { dk1: C.ink, lt1: "FFFFFF", dk2: C.tealDeep, lt2: C.peach, accent1: C.tealDeep, accent2: C.orangeFig, accent3: C.teal, accent4: C.orange, accent5: C.gray, accent6: C.mute, hlink: C.tealDeep, folHlink: C.tealDeep } };
 
@@ -36,17 +33,17 @@ pres.layout = "LAYOUT_WIDE";
 pres.theme = { headFontFace: FONT_D, bodyFontFace: FONT };
 pres.author = "Davinson Arteaga"; pres.title = "Banco W - Priorizacion de renovaciones";
 
-const FOOT = "Prueba técnica Científico de Datos · Davinson Arteaga";
-const hasLogo = fs.existsSync(LOGO);
+const FOOT = "Preparado para Banco W · Prueba técnica Científico de Datos · Davinson Arteaga";
 pres.defineSlideMaster({
   title: "DOC", background: { color: "FFFFFF" },
   objects: [
-    ...(hasLogo ? [{ image: { x: X0, y: Y.foot - 0.04, w: 0.31 * 329 / 350, h: 0.31, path: LOGO, altText: "Banco W" } }] : []),
-    { text: { text: FOOT, options: { x: hasLogo ? X0 + 0.42 : X0, y: Y.foot, w: 8, h: 0.25, fontSize: 9, color: C.gray, fontFace: FONT, margin: 0, valign: "middle" } } },
-    { placeholder: { options: { name: "title", type: "title", x: X0, y: Y.title, w: FULL, h: 0.48, fontSize: 24, bold: false, color: C.ink, fontFace: FONT_D, margin: 0, valign: "top", align: "left" } } },
+    { text: { text: FOOT, options: { x: X0, y: Y.foot, w: 8, h: 0.25, fontSize: 9, color: C.gray, fontFace: FONT, margin: 0, valign: "middle" } } },
+    { placeholder: { options: { name: "title", type: "title", x: X0, y: Y.title - 0.04, w: FULL, h: 0.56, fontSize: 24, bold: false, color: C.ink, fontFace: FONT_D, margin: 0, valign: "top", align: "left" } } },
   ],
-  slideNumber: { x: 12.33, y: Y.foot, w: 0.5, h: 0.25, fontSize: 9, color: C.gray, fontFace: FONT, align: "right" },
+  slideNumber: { x: 12.33, y: Y.foot - 0.06, w: 0.5, h: 0.38, fontSize: 9, color: C.gray, fontFace: FONT, align: "right" },
 });
+
+pres.defineSlideMaster({ title: "HERO", background: { color: C.tealDeep }, objects: [] });
 
 // ---------- helpers ----------
 // Espacio duro entre cifra y unidad (57 %, 103 M, 85 k) y tras ≈, para que un salto de línea no las separe.
@@ -64,10 +61,10 @@ const answer = (s, t) => {
   s.addShape(pres.ShapeType.rect, { x: X0, y: Y.band, w: FULL, h: Y.bandH, fill: { color: C.tealDeep }, line: { type: "none" }, objectName: "Respuesta" });
   s.addText(t, { ...TB, x: X0 + 0.24, y: Y.band, w: FULL - 0.48, h: Y.bandH, fontSize: 12.5, color: "FFFFFF", valign: "middle" });
 };
-const sub = (s, t, x, y, w, color = C.ink) => s.addText(t, { ...TB, x, y, w, h: 0.28, fontSize: 12, bold: true, color });
+const sub = (s, t, x, y, w, color = C.ink) => s.addText(t, { ...TB, x, y, w, h: 0.32, fontSize: 12, bold: true, color });
 const figure = (s, x, w, y, num, txt) => {
-  s.addText(num, { ...TB, fontFace: FONT_D, x, y, w, h: 0.55, fontSize: 32, color: C.orangeFig, lineSpacingMultiple: 1.0, valign: "bottom" });
-  s.addText(txt, { ...TB, x, y: y + 0.6, w, h: 0.6, fontSize: 11 });
+  s.addText(num, { ...TB, fontFace: FONT_D, x, y, w, h: 0.55, fontSize: 28, color: C.orangeFig, lineSpacingMultiple: 1.0, valign: "bottom" });
+  s.addText(txt, { ...TB, x, y: y + 0.6, w, h: 0.66, fontSize: 11 });
 };
 const hair = (s, y, x = X0, w = FULL) => s.addShape(pres.ShapeType.line, { x, y, w, h: 0, line: { color: C.line, width: 0.75 } });
 const mark = (s, x, y, color) => s.addShape(pres.ShapeType.rect, { x, y, w: 0.09, h: 0.09, fill: { color }, line: { type: "none" } });
@@ -95,9 +92,19 @@ const chartBase = { showValue: true, dataLabelPosition: "outEnd", dataLabelFontS
 // Límites (qa_deck.py): ≤ 170 palabras fuera de tablas (sin título), cuerpo ≥ 11 pt, tablas ≥ 10 pt y ≤ 5 filas (monitoreo ≤ 6), celdas ≤ 20 palabras, sin jerga visible.
 // El enunciado limita a 6 slides + 1 anexo. No se agrega portada: la slide 1 es la decisión.
 
+// ============================================================ PORTADA
+pres.addSection({ title: "Portada" });
+let s = newSlide({ masterName: "HERO", sectionTitle: "Portada" });
+s.addShape(pres.ShapeType.rect, { x: cx(1), y: 1.75, w: 1.0, h: 0.08, fill: { color: C.orange }, line: { type: "none" } });
+s.addText("Priorizar renovaciones con capacidad limitada", { ...TB, fontFace: FONT_D, x: cx(1), y: 2.0, w: cw(9), h: 1.55, fontSize: 40, color: "FFFFFF", lineSpacingMultiple: 1.0 });
+s.addText("A quién contactar cada mes con 8.000 cupos, netos de riesgo", { ...TB, x: cx(1), y: 3.7, w: cw(10), h: 0.5, fontSize: 20, color: "FFFFFF" });
+s.addText([{ text: "Davinson Arteaga", options: { bold: true, breakLine: true } }, { text: "Prueba técnica · Científico de Datos", options: { breakLine: true } }, { text: "Preparado para Banco W · Octubre de 2026" }],
+  { ...TB, x: cx(1), y: 5.0, w: cw(10), h: 1.2, fontSize: 14, color: "FFFFFF" });
+s.addNotes("Portada. La presentación responde, en orden, las seis preguntas del enunciado: qué decisión tomar, qué dicen los datos, qué alternativas sobreviven, cuál genera más valor, cómo probarlo y qué hacer ahora. Duración objetivo: 15 minutos más 15 de preguntas.");
+
 // ============================================================ SLIDE 1 · ¿Qué decisión debemos tomar y por qué importa?
 pres.addSection({ title: "Decisión" });
-let s = newSlide({ masterName: "DOC", sectionTitle: "Decisión" });
+s = newSlide({ masterName: "DOC", sectionTitle: "Decisión" });
 s.addText("Contactar a los 8.000 que más valor dejan, netos de riesgo", { placeholder: "title" });
 answer(s, "Debemos elegir cada mes a cuáles 8.000 de los 25.000 elegibles contactar, por valor neto de riesgo y no por probabilidad de renovar. Importa porque una renovación que cae en mora 30+ borra lo que aportan 4,3 sanas.");
 figure(s, cx(0), cw(4), Y.body, "8.000 de 25.000", "La restricción es la capacidad, no la demanda.");
@@ -151,21 +158,21 @@ s = newSlide({ masterName: "DOC", sectionTitle: "Alternativas" });
 s.addText("B pasa a piloto, A se verifica antes y C se descarta", { placeholder: "title" });
 answer(s, "Sobreviven dos: B, que va a piloto, y A, solo si pasa una verificación variable por variable. C no sobrevive porque su AUC viene de información que no existe al priorizar. D se evalúa en el piloto.");
 tbl(s, [
-  [th("Alt."), th("Tipo"), th("AUC", R), th("Conversión reportada", R), th("Mora", R), th("Lectura crítica"), th("Veredicto")],
+  [th("Alt."), th("Tipo"), th("AUC", R), th("Conversión", R), th("Mora", R), th("Lectura crítica"), th("Veredicto")],
   [td("Actual", { bold: true }), td("Regla"), td("—", R), td("3,6 %", R), td("5,1 %", R), td("Es la referencia: la única conversión observada en producción."), verdict("Referencia", C.mute)],
   [td("C", { bold: true }), td("LightGBM"), td("0,94", R), td("14,8 %", R), td("6,4 %", R), td("Repliqué su 0,94: solo aparece con el resultado de la gestión; con variables legítimas da 0,82."), verdict("Descartar", C.orange)],
   [td("A", { bold: true }), td("XGBoost"), td("0,86", R), td("9,4 %", R), td("7,2 %", R), td("Su 0,86 no se confirma con esta base y su mora es la más alta: verificar cada variable antes."), verdict("Verificar", C.mute)],
   [td("B", { bold: true }), td("Logística"), td("0,79", R), td("8,8 %", R), td("4,6 %", R), td("Su 0,79 coincide con la réplica, está calibrado y tiene la menor mora; también se verifica antes."), verdict("Piloto", C.teal)],
   [td("D", { bold: true }), td("Uplift"), td("Qini 0,12", R), td("7,9 %", R), td("+3,1 pp", R), td("Único que mide el efecto del contacto, pero sus cifras no son comparables y no se sabe cómo se aleatorizó."), verdict("Evaluar en piloto", C.mute)],
-], { x: cx(0), y: Y.body, w: cw(8), colW: [0.6, 0.85, 0.75, 1.0, 0.7, 2.755, 1.5], rowH: [0.42, 0.56, 0.56, 0.56, 0.56, 0.56] });
+], { x: cx(0), y: Y.body, w: cw(8), colW: [0.6, 0.85, 0.75, 1.0, 0.7, 2.755, 1.5], rowH: [0.3, 0.56, 0.56, 0.56, 0.56, 0.56] });
 
 sub(s, "Réplica: el 0,94 de C solo aparece con la fuga", cx(8), Y.body, cw(4));
-s.addText("Validación en el tiempo: entrenar con meses pasados, esperar un mes y probar en el siguiente.", { ...TB, x: cx(8), y: 2.32, w: cw(4), h: 0.45, fontSize: 11, color: C.gray });
+s.addText("Validación en el tiempo: entrenar con meses pasados, esperar un mes y probar en el siguiente.", { ...TB, x: cx(8), y: 2.32, w: cw(4), h: 0.55, fontSize: 11, color: C.gray });
 s.addChart(pres.ChartType.bar, [{ name: "AUC", labels: ["15 variables al corte", "+ resultado_gestion_30d", "+ dias_hasta_renovacion"], values: [0.82, 0.944, 0.997] }], {
   ...chartBase, x: cx(8) - 0.05, y: 2.85, w: cw(4) + 0.05, h: 1.75, barDir: "bar", chartColors: [C.tealDeep, C.orangeFig, C.orangeFig],
   dataLabelFormatCode: "0.00", valAxisMinVal: 0.5, valAxisMaxVal: 1.1, valAxisHidden: true, catAxisLabelFontSize: 10, barGapWidthPct: 55,
 });
-s.addText("Una validación aleatoria (0,82) no habría revelado la fuga; la temporal sí.", { ...TB, x: cx(8), y: 4.68, w: cw(4), h: 0.45, fontSize: 11 });
+s.addText("Una validación aleatoria (0,82) no habría revelado la fuga; la temporal sí.", { ...TB, x: cx(8), y: 4.66, w: cw(4), h: 0.58, fontSize: 11 });
 
 hair(s, 5.4);
 sub(s, "Por qué más AUC puede ser peor decisión", cx(0), 5.55, cw(6));
@@ -178,27 +185,27 @@ bullets(s, [
   "Saber qué parte de la campaña de D fue al azar y cómo se cumplió.",
   "Medir los tres en un mismo grupo de control, en pesos netos de mora.",
 ], { x: cx(6), y: 5.87, w: cw(6), h: 1.1, gap: 3 });
-s.addNotes("Pregunta del enunciado: ¿Qué alternativas de modelo tenemos y cuáles sobreviven al análisis? Repliqué con la base: el AUC de C (0,94) solo se obtiene incluyendo el resultado de gestión; con dias_hasta_renovacion llega a 1,00. Validación temporal: entrenar ≤ t−2, probar en t, mayo a agosto; k-fold aleatorio da 0,82 y no revela la fuga. A: 0,86 supera lo que esta base permite replicar (0,82), pero la hoja viene de otra población, así que no es concluyente; su mora 7,2 % es la peor y, de ser real, lo convierte en la alternativa de menor valor; ambas cosas exigen auditoría variable por variable. B: coherente con la réplica, calibrado (pendiente 0,91), estable; pasa a piloto tras la misma ficha de fuga. D: la hoja reporta «+3,1 pp incremental» en la columna de mora y Qini en la de PR-AUC; no es comparable con A, B y C sin aclarar unidades. Las conversiones «top 8k» de la hoja y la conversión top 32 % de la réplica (≈ 45 %) no son comparables: otra población y otra regla de contacto. Para comparar propensión vs. uplift: la regla de asignación de la campaña de D (fracción aleatorizada, unidad, cumplimiento) y un mismo holdout donde medir uplift@8k de cada modelo en COP netos de mora, con intervalos.");
+s.addNotes("Pregunta del enunciado: ¿Qué alternativas de modelo tenemos y cuáles sobreviven al análisis? Repliqué con la base: el AUC de C (0,94) solo se obtiene incluyendo el resultado de gestión; con dias_hasta_renovacion llega a 0,997 con la misma logística (1,00 redondeado). Validación temporal: entrenar ≤ t−2, probar en t, mayo a agosto; k-fold aleatorio da 0,82 y no revela la fuga. A: 0,86 supera lo que esta base permite replicar (0,82), pero la hoja viene de otra población, así que no es concluyente; su mora 7,2 % es la peor y, de ser real, lo convierte en la alternativa de menor valor; ambas cosas exigen auditoría variable por variable. B: coherente con la réplica, calibrado (pendiente 0,91), estable; pasa a piloto tras la misma ficha de fuga. D: la hoja reporta «+3,1 pp incremental» en la columna de mora y Qini en la de PR-AUC; no es comparable con A, B y C sin aclarar unidades. Las conversiones «top 8k» de la hoja y la conversión top 32 % de la réplica (≈ 45 %) no son comparables: otra población y otra regla de contacto. Para comparar propensión vs. uplift: la regla de asignación de la campaña de D (fracción aleatorizada, unidad, cumplimiento) y un mismo holdout donde medir uplift@8k de cada modelo en COP netos de mora, con intervalos.");
 
 // ============================================================ SLIDE 4 · ¿Cuál genera mayor valor bajo riesgo y capacidad real?
 pres.addSection({ title: "Valor" });
 s = newSlide({ masterName: "DOC", sectionTitle: "Valor" });
 s.addText("B deja más valor que A: 237 frente a 218 millones al mes", { placeholder: "title" });
 answer(s, "B gana por riesgo, no por conversión: cada renovación de B vale 337.200 y una de A, 290.400. Ese valor solo se captura si la lista respeta la capacidad de cada regional, y cerca de la mitad podría ocurrir sin contacto.");
-sub(s, "Valor esperado mensual neto de mora (COP millones)", cx(0), Y.body, cw(5));
-s.addText("8.000 contactos × conversión × (420.000 − mora × 1.800.000). D con la mora actual; C fuera por la fuga.", { ...TB, x: cx(0), y: 2.3, w: cw(5), h: 0.45, fontSize: 11, color: C.gray });
+sub(s, "Valor esperado neto de mora, COP millones al mes", cx(0), Y.body, cw(5));
+s.addText("8.000 contactos × conversión × (420.000 − mora × 1.800.000). D con la mora actual; C fuera por la fuga.", { ...TB, x: cx(0), y: 2.34, w: cw(5), h: 0.55, fontSize: 11, color: C.gray });
 s.addChart(pres.ChartType.bar, [{ name: "VE neto", labels: ["Actual", "A XGBoost", "B Logística", "D Uplift"], values: [94.5, 218.4, 237.4, 207.4] }], {
-  ...chartBase, x: cx(0) - 0.08, y: 2.85, w: cw(5) + 0.08, h: 1.9, barDir: "col", chartColors: [C.mute, C.mute, C.tealDeep, C.mute],
+  ...chartBase, x: cx(0) - 0.08, y: 2.92, w: cw(5) + 0.08, h: 1.83, barDir: "col", chartColors: [C.mute, C.mute, C.tealDeep, C.mute],
   dataLabelFormatCode: "0", valAxisMinVal: 0, valAxisMaxVal: 300, valAxisMajorUnit: 300, barGapWidthPct: 80,
 });
 figure(s, cx(5), cw(3), Y.body, "+143 M", "al mes frente a hoy, si las conversiones reportadas se cumplen.");
 figure(s, cx(8), cw(4), Y.body, "≈ 103 M", "valor creado por el contacto si, como sugiere la base, el 57 % de las renovaciones de B ocurriría igual.");
-sub(s, "Lo que el cálculo no prueba", cx(5), 3.3, cw(7));
+sub(s, "Lo que el cálculo no prueba", cx(5), 3.36, cw(7));
 bullets(s, [
   "En conversión, la ventaja de B no se distingue del azar; en mora, apenas. B gana por ser más seguro y auditable.",
   "A superaría a B solo con mora real menor que 5,8 %; faltan costo de contacto y pérdida real por mora.",
-], { x: cx(5), y: 3.62, w: cw(7), h: 1.1, gap: 4 });
-sub(s, "Cada regional llena su cuota y los cupos sobrantes van donde más valen", cx(0), 4.9, FULL);
+], { x: cx(5), y: 3.7, w: cw(7), h: 1.08, gap: 4 });
+sub(s, "Cada regional llena su cuota y los cupos sobrantes van donde más valen", cx(0), 4.86, FULL);
 const REG = [
   ["Suroccidente", "2.600", "≈ 2.400", "≈ 200 cupos sin usar", "5,4 %", "Llena su cuota con su propio ranking y cede los cupos que no use.", false],
   ["Centro", "1.900", "≈ 2.100", "≈ 200 clientes sin gestor", "4,7 %", "Lista semanal para evitar la saturación de fin de mes.", true],
@@ -209,8 +216,8 @@ const REG = [
 tbl(s, [
   [th("Regional"), th("Capacidad", R), th("Con un ranking único", R), th("Frente a la capacidad"), th("Mora histórica", R), th("Regla")],
   ...REG.map(r => [td(r[0]), td(r[1], R), td(r[2], R), r[6] ? verdict(r[3], C.orange, false) : td(r[3]), td(r[4], R), td(r[5])].map(c => ({ ...c, options: { ...c.options, fontSize: 10 } }))),
-], { x: cx(0), y: 5.22, w: FULL, colW: [1.3, 1.0, 1.75, 2.35, 1.3, 4.633], rowH: 0.215 });
-s.addText("Modelo simple, junio a agosto (696 clientes); proyección aproximada.", { ...TB, x: cx(0), y: 6.66, w: FULL, h: 0.25, fontSize: 11, color: C.gray });
+], { x: cx(0), y: 5.2, w: FULL, colW: [1.3, 1.0, 1.75, 2.35, 1.3, 4.633], rowH: [0.26, 0.215, 0.215, 0.215, 0.215, 0.215] });
+s.addText("Modelo simple, junio a agosto (696 clientes); proyección aproximada.", { ...TB, x: cx(0), y: 6.68, w: FULL, h: 0.3, fontSize: 11, color: C.gray });
 s.addNotes("Pregunta del enunciado: ¿Cuál genera mayor valor bajo riesgo y capacidad real? B gana por riesgo, no por conversión: 237 M netos al mes frente a 218 M de A; cada renovación de B vale 337.200 frente a 290.400 de A. Incertidumbre (supuesto 8.000 contactos por alternativa, 752 y 704 renovados): conversión z = 1,32 (p 0,19), mora z = 2,11 (p 0,03); en valor B es al menos equivalente dentro de la incertidumbre. El valor no es incremental: el orgánico del tercil alto de buró (de donde sale el top de B) es ≈ 5 % (7 de 129 no contactados renovaron solos; IC 2,7–10,8 %), así que ≈ 57 % de las renovaciones de B serían orgánicas y el valor incremental ≈ 103 M (129 M con orgánico 4 %, 76 M con 6 %). Por eso el piloto. Faltan el costo de contacto, la LGD real y el origen del «top 8k». Capacidad: un ranking global sobrecarga Centro, Norte y Eje y deja ≈ 400 cupos ociosos en Suroccidente y Oriente; cuotas por regional con transferencia por valor marginal (tope a pactar con Comercial, 10 % como referencia). Proyección a centenas con la mezcla regional de la muestra de test. La conversión en muestra con y sin cuotas es equivalente (41,9 % vs. 43,5 %, cuatro renovaciones de diferencia, dentro del ruido). Sensibilidad a la pérdida por mora de 1,0 / 1,8 / 2,5 / 3,5 M: B 263 / 237 / 215 / 182 vs. A 262 / 218 / 181 / 126.");
 
 // ============================================================ SLIDE 5 · ¿Cómo probaríamos que funciona y cómo controlamos el riesgo?
@@ -266,33 +273,34 @@ s.addNotes("Pregunta del enunciado: ¿Cómo probaríamos que funciona y cómo co
 pres.addSection({ title: "Recomendación" });
 s = newSlide({ masterName: "DOC", sectionTitle: "Recomendación" });
 s.addText("Aprobar hoy el piloto de B y no liberar C", { placeholder: "title" });
-answer(s, "Pedimos tres decisiones hoy: aprobar desde el próximo corte el piloto de B con grupo de control, no liberar C y fijar el KPI y los guardrails con su responsable.");
+answer(s, "Tres decisiones: aprobar el piloto de B desde el próximo corte, no liberar C y fijar KPI y guardrails.");
 const DEC = [
   ["1", "Aprobar el piloto", "Dos meses, tres brazos, 8.000 contactos al mes."],
-  ["2", "No liberar C; condicionar A y D", "A, tras verificar sus variables; D, con datos del grupo de control."],
-  ["3", "Fijar KPI y guardrails", "Pesos netos de mora por contacto; cinco límites con umbral y responsable."],
+  ["2", "No liberar C; condicionar A y D", "A, tras verificar variables; D, con datos del piloto."],
+  ["3", "Fijar KPI y guardrails", "KPI neto de mora; cinco límites con responsable."],
 ];
-sub(s, "Tres decisiones para hoy", cx(0), Y.body, cw(7));
+sub(s, "Tres decisiones", cx(0), Y.body, cw(7));
 DEC.forEach((d, i) => {
-  const y = 2.42 + i * 0.78;
-  s.addText(d[0], { ...TB, fontFace: FONT_D, x: cx(0), y: y - 0.06, w: 0.5, h: 0.6, fontSize: 32, color: C.orangeFig, lineSpacingMultiple: 1.0 });
-  s.addText([{ text: d[1], options: { bold: true, breakLine: true } }, { text: d[2] }], { ...TB, x: cx(0) + 0.6, y, w: cw(7) - 0.6, h: 0.66, fontSize: 11 });
-  if (i < 2) hair(s, y + 0.7, cx(0), cw(7));
+  const y = 2.38 + i * 0.68;
+  s.addText(d[0], { ...TB, fontFace: FONT_D, x: cx(0), y: y - 0.06, w: 0.5, h: 0.6, fontSize: 28, color: C.orangeFig, lineSpacingMultiple: 1.0 });
+  s.addText([{ text: d[1], options: { bold: true, breakLine: true } }, { text: d[2] }], { ...TB, x: cx(0) + 0.6, y, w: cw(7) - 0.6, h: 0.58, fontSize: 11 });
+  if (i < 2) hair(s, y + 0.62, cx(0), cw(7));
 });
-sub(s, "Gobierno", cx(0), 4.95, cw(7));
+sub(s, "Gobierno", cx(0), 4.46, cw(7));
 bullets(s, [
   [{ text: "Equidad: ", bold: true }, { text: "selección y conversión por regional, remesas y buró." }],
-  "Importancia no es causa: solo el grupo de control prueba si llamar cambia el resultado.",
-], { x: cx(0), y: 5.27, w: cw(7), h: 1.4, gap: 4 });
+  [{ text: "Auditable: ", bold: true }, { text: "ficha del modelo, ficha de la base, verificación de variables, plan de monitoreo y responsables por área." }],
+  [{ text: "Importancia no es causa: ", bold: true }, { text: "al buró alto se le contactó más (37 % frente a 22 % sin contactar); solo el grupo de control prueba si llamar cambia el resultado." }],
+], { x: cx(0), y: 4.82, w: cw(7), h: 2.1, gap: 4 });
 // Panel lateral teal profundo con la ruta de 90 días (ritmo de cierre).
 const PX = cx(8) - 0.1, PW = X0 + FULL - PX;
 s.addShape(pres.ShapeType.rect, { x: PX, y: Y.body, w: PW, h: 6.92 - Y.body, fill: { color: C.tealDeep }, line: { type: "none" }, objectName: "Ruta 90 días" });
 sub(s, "Ruta de 90 días", PX + 0.28, Y.body + 0.24, PW - 0.56, "FFFFFF");
 const STEPS = [
-  ["Semanas 1 a 2", "Definir el 12 %, la regla de contacto y el uso del buró."],
-  ["Semanas 3 a 4", "Verificar A y B variable por variable; datos fechados al corte; cuotas."],
-  ["Meses 2 a 3", "Piloto con grupo de control y monitoreo semanal."],
-  ["Mes 4", "Si llamar crea renovaciones, escalar; si no, mantener la herramienta actual."],
+  ["Semanas 1 a 2", "Definir el 12 %, la regla de contacto y el buró."],
+  ["Semanas 3 a 4", "Verificar A y B; datos fechados al corte; cuotas."],
+  ["Meses 2 a 3", "Piloto y monitoreo semanal."],
+  ["Mes 4", "Escalar si llamar crea renovaciones; si no, mantener la actual."],
 ];
 STEPS.forEach((st, i) => {
   const y = Y.body + 0.72 + i * 1.02;
@@ -301,10 +309,19 @@ STEPS.forEach((st, i) => {
 });
 s.addNotes("Pregunta del enunciado: ¿Qué recomienda hacer ahora? Pedimos tres decisiones; A queda condicionada a la verificación de sus variables y D a los datos del piloto. Ruta de 90 días con la ficha de fuga variable por variable para A y B en las semanas 3 a 4 (fuente, timestamp, disponibilidad al puntuar); pipeline point-in-time. Gobierno: sin cuotas, el modelo limpio selecciona 28 % en Oriente frente a 35 % en Centro (AIR ≈ 0,80 puntual, pero con 100 a 200 clientes por regional el intervalo bootstrap es 0,49–0,88: el 0,80 no informa; la regla está pensada para el universo mensual de 25.000, donde el intervalo se estrecha unas seis veces); con cuotas, la selección por regional la fija la capacidad, así que la equidad se vigila en conversión y calibración por grupo dentro de cada regional. El 79 % de la lista cae en el tercil alto de buró: ese piso lo fija la política de riesgo, no el algoritmo. Auditable: model card, datasheet, ficha de fuga, plan de monitoreo, RACI. SHAP es correlación: en la base, 37 % del tercil bajo de buró quedó sin contactar frente a 22 % del alto; solo el holdout prueba causalidad.");
 
+// ============================================================ CIERRE
+pres.addSection({ title: "Cierre" });
+s = newSlide({ masterName: "HERO", sectionTitle: "Cierre" });
+s.addShape(pres.ShapeType.rect, { x: cx(1), y: 2.2, w: 1.0, h: 0.08, fill: { color: C.orange }, line: { type: "none" } });
+s.addText("Gracias", { ...TB, fontFace: FONT_D, x: cx(1), y: 2.45, w: cw(10), h: 0.95, fontSize: 48, color: "FFFFFF", lineSpacingMultiple: 1.0 });
+s.addText("Pedimos hoy tres decisiones: aprobar el piloto de B con grupo de control, no liberar C y fijar el KPI y los guardrails con su responsable.", { ...TB, x: cx(1), y: 3.6, w: cw(9), h: 0.95, fontSize: 18, color: "FFFFFF" });
+s.addText("Preguntas y discusión. El anexo técnico queda de respaldo.", { ...TB, x: cx(1), y: 5.1, w: cw(10), h: 0.4, fontSize: 14, color: "FFFFFF" });
+s.addNotes("Cierre: repetir las tres decisiones y abrir preguntas. Si preguntan por detalle técnico, ir al anexo (réplica fuera de tiempo, valor esperado, tamaños de muestra, variables excluidas) o a la guía de 19 preguntas.");
+
 // ============================================================ ANEXO (misma retícula, mayor densidad)
 pres.addSection({ title: "Anexo" });
 s = newSlide({ masterName: "DOC", sectionTitle: "Anexo" });
-s.addText("Anexo · Soporte técnico: réplica, economía, tamaños de muestra y variables", { placeholder: "title" });
+s.addText("Anexo · Réplica, economía, tamaños de muestra y variables", { placeholder: "title" });
 const ah = (t, o = {}) => th(t, { fontSize: 9.5, ...o }), ad = (t, o = {}) => td(t, { fontSize: 9.5, ...o });
 const ah8 = (t, o = {}) => th(t, { fontSize: 8.5, ...o }), ad8 = (t, o = {}) => td(t, { fontSize: 8.5, ...o });
 sub(s, "Réplica fuera de tiempo (train ≤ t−2, un corte de gap, test = t, t = mayo a agosto)", cx(0), 1.15, cw(7));
@@ -314,7 +331,7 @@ tbl(s, [
   [ad("15 ex ante limpias"), ad("LightGBM"), ad("0,791", R), ad("0,77–0,82", R), ad("0,49", R), ad("0,78", R), ad("0,137", R)],
   [ad("+ remesas, contactabilidad, regional"), ad("Logística"), ad("0,821", R), ad("0,79–0,85", R), ad("0,53", R), ad("0,91", R), ad("0,128", R)],
   [ad("+ resultado_gestion_30d"), ad("Logística"), ad("0,944", R), ad("0,93–0,97", R), ad("0,85", R), ad("0,99", R), ad("0,067", R)],
-  [ad("+ dias_hasta_renovacion"), ad("LightGBM"), ad("1,000", R), ad("1,00–1,00", R), ad("1,00", R), ad("1,00", R), ad("0,000", R)],
+  [ad("+ dias_hasta_renovacion"), ad("Logística"), ad("0,997", R), ad("0,99–1,00", R), ad("0,99", R), ad("1,03", R), ad("0,015", R)],
 ], { x: cx(0), y: 1.47, w: cw(7), colW: [2.3, 0.85, 0.65, 0.95, 0.7, 1.161, 0.5], rowH: 0.25 });
 s.addText("Prevalencia de la base 20,2 %. Calibración: pendiente de observado sobre predicho (1 = perfecta); media predicha 0,197 vs. observada 0,207. Las conversiones «top 8k» de la hoja no son comparables con esta base. Sin gap (train < t, abril a agosto): 0,82 / 0,80; k-fold aleatorio: 0,82. Coeficientes estandarizados del modelo limpio: score_buro 1,29; max_mora_6m −0,56; respondio_oferta_previa 0,27; el resto < 0,15. Orgánico por tercil de buró (no contactados): alto 5,4 % (7/129, IC 2,7–10,8 %), contactados del tercil alto 53 %: parte del valor de B es orgánica y el holdout lo mide.", { ...TB, x: cx(0), y: 3.2, w: cw(7), h: 0.88, fontSize: 8.5, color: C.gray, lineSpacingMultiple: 1.05 });
 
@@ -356,5 +373,5 @@ s.addNotes("Anexo de soporte para preguntas técnicas. Detalle completo en la gu
 (async () => {
   await pres.writeFile({ fileName: OUT });
   await applyTheme(OUT, THEME);
-  console.log("written", OUT, "fonts", FONT, "/", FONT_D, hasLogo ? "con logo" : "sin logo");
+  console.log("written", OUT, "fonts", FONT, "/", FONT_D);
 })();
