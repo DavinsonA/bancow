@@ -6,6 +6,19 @@ Este documento acompaña la presentación de 6 slides + anexo. Contiene las resp
 
 Convención: **[E]** dato del enunciado o anexo · **[C]** cálculo propio reproducible en `work/` · **[S]** supuesto declarado.
 
+## Términos usados
+
+En las slides se usan términos en español; en estas respuestas y en las notas del orador aparece también el término técnico habitual.
+
+- **Grupo de control** (*holdout*): clientes del top de la lista nueva que, elegidos al azar, no se contactan; sirven para medir si el contacto crea renovaciones.
+- **Lista actual y lista nueva** (*champion* y *challenger*): la lista que produce la herramienta vigente y la que produce el modelo B; en el piloto cada una gestiona una mitad del universo.
+- **Mora por cosecha** (*vintage*): mora 30+ de las renovaciones de cada mes, seguida en el tiempo por brazo y regional.
+- **Fecha garantizada al corte** (*point-in-time*): cada variable con la que se puntúa existía, con ese valor, en la fecha de corte; no se recalcula hacia atrás.
+- **Efecto del contacto** (*uplift*): diferencia entre la tasa de renovación de los contactados y la del grupo de control; mide lo que la llamada crea, no la propensión.
+- **Verificación variable por variable** (*ficha de fuga*): para cada variable de A y B, fuente, momento en que se calcula y disponibilidad al puntuar; descarta las que contienen el resultado.
+- **PSI**: índice de estabilidad poblacional; compara la distribución del score o de una variable entre dos periodos (0,10 investigar; 0,25 revalidar).
+- **SRM** (*sample ratio mismatch*): desbalance entre el número de clientes asignado a cada brazo y el esperado por la aleatorización; si aparece, la asignación está sesgada.
+
 ---
 
 ## Bloque 1 · Definición del problema y criterio de negocio
