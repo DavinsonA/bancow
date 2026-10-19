@@ -12,8 +12,8 @@ Solución al reto de la prueba técnica de Científico de Datos de Banco W (prio
 | `work/02_modelos_fuga.py` | Réplica de las métricas de la hoja `Resultados_Modelos` con validación temporal rolling-origin, con y sin variables de fuga; scores del modelo limpio. |
 | `work/03_economia_capacidad_piloto.py` | Valor esperado por alternativa, sensibilidad, asignación con capacidad regional y tamaños de muestra del piloto. |
 | `work/output/` | Salidas de los tres scripts (txt y csv). |
-| `work/deck/build_deck.js` | Generador del PPT (pptxgenjs). |
-| `work/deck/qa_deck.py` | QA de densidad del deck con python-pptx: ≤ 140 palabras fuera de tablas, cuerpo ≥ 11 pt, tablas ≥ 10 pt y ≤ 5 filas (monitoreo ≤ 6), notas en todas las slides. |
+| `work/deck/build_deck.js` | Generador del PPT (pptxgenjs). Paleta naranja + teal de Banco W, Segoe UI para texto y Bahnschrift para títulos y cifras (ambas vienen con Windows 10 y 11). El isotipo del pie se lee de `docs_privados/assets/` (no versionado); sin ese archivo el deck se genera sin logo. |
+| `work/deck/qa_deck.py` | QA del deck con python-pptx: ≤ 170 palabras fuera de tablas, celdas ≤ 20 palabras, cuerpo ≥ 11 pt, tablas ≥ 10 pt y ≤ 5 filas (monitoreo ≤ 6), sin jerga en el texto visible, solo Segoe UI y Bahnschrift, notas en todas las slides. |
 | `requirements.txt` | Versiones fijadas de Python. |
 
 ## Datos de entrada (no versionados)
@@ -42,7 +42,15 @@ python work/01_diagnostico.py > work/output/01_diagnostico.txt
 python work/02_modelos_fuga.py > work/output/02_modelos_fuga.txt
 python work/03_economia_capacidad_piloto.py > work/output/03_economia.txt
 cd work/deck && npm install && NODE_PATH="$PWD/node_modules" node build_deck.js
-cd ../.. && python work/deck/qa_deck.py   # densidad: palabras, fuentes, filas, notas (exit 1 si falla)
+cd ../.. && python work/deck/qa_deck.py   # palabras, jerga, fuentes, filas, notas (exit 1 si falla)
+```
+
+Opcional, en Windows con PowerPoint: incrustar las fuentes para que el deck se vea igual en cualquier equipo (el entregable versionado ya las trae).
+
+```powershell
+$f = (Resolve-Path entregables\BancoW_Priorizacion_Renovaciones_DavinsonArteaga.pptx).Path; $t = "$env:TEMP\deck_fuentes.pptx"
+$app = New-Object -ComObject PowerPoint.Application; $p = $app.Presentations.Open($f, $false, $false, $false)
+$p.SaveAs($t, 24, -1); $p.Close(); $app.Quit(); Copy-Item $t $f -Force
 ```
 
 Requisitos: Python 3.13 con las versiones fijadas en `requirements.txt`; Node 22. Las salidas se escriben en UTF-8.

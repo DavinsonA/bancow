@@ -6,6 +6,7 @@ PATH = sys.argv[1] if len(sys.argv) > 1 else "entregables/BancoW_Priorizacion_Re
 MAX_WORDS, MIN_BODY, MIN_TABLE, MAX_ROWS, MAX_CELL = 170, 11, 10, 5, 20
 ROWS_EXC = {5: 6}            # slide 5: monitoreo ≤ 6 filas
 N_MAIN, N_TOTAL = 6, 7
+FONTS_OK = {"Segoe UI", "Bahnschrift"}  # texto y display; cualquier otra fuente explícita es un error
 # Jerga prohibida en el texto visible de las slides 1-6 (se conserva en notas y anexo). Excepciones: (slide, patrón) -> texto permitido en el mismo cuadro o celda.
 JARGON = [r"\bholdout\b", r"\bchampion\b", r"\bchallenger\b", r"\bvintage\b", r"point[- ]in[- ]time", r"ficha de fuga", r"\buplift\b", r"\borgánic\w*",
           r"\bship\b", r"\brollback\b", r"\bLGD\b", r"z\s*≈", r"IC\s*95", r"\bPSI\b", r"\bSRM\b", r"\bCUPED\b"]
@@ -14,6 +15,10 @@ JARGON_EXC = {(5, r"\bchampion\b"): r"\(champion\)",                    # primer
               (4, r"\buplift\b"): r"^D Uplift$",                        # etiqueta de la barra de D en el gráfico (mismo uso)
               (5, r"\bPSI\b"): r"población"}                            # explicado en la misma celda
 words = lambda t: len([w for w in re.split(r"\s+", t) if re.search(r"[0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ]", w)])
+def fonts(tf):
+    for p in tf.paragraphs:
+        for r in p.runs:
+            if r.font.name and r.text.strip(): yield r.font.name
 def sizes(tf):
     for p in tf.paragraphs:
         for r in p.runs:
@@ -46,6 +51,11 @@ for i, sl in enumerate(slides, 1):
             w += words(sh.text_frame.text); fb += list(sizes(sh.text_frame)); texts.append(sh.text_frame.text)
     if main:
         for tx in texts: jargon_hits += [(i, p, s) for p, s in jargon(i, tx)]
+    bad = set()
+    for sh in sl.shapes:
+        if sh.has_text_frame: bad |= set(fonts(sh.text_frame)) - FONTS_OK
+        if sh.has_table: bad |= {f for r in sh.table.rows for c in r.cells for f in fonts(c.text_frame)} - FONTS_OK
+    if bad: fails.append(f"slide {i}: fuentes fuera del sistema {sorted(bad)}")
     notes = sl.has_notes_slide and sl.notes_slide.notes_text_frame.text.strip() != ""
     if not notes: fails.append(f"slide {i}: sin notas del orador")
     mb = min(fb) if fb else None; mt = min(ft) if ft else None
